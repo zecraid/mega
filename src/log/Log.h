@@ -10,7 +10,7 @@
 #include <sys/stat.h>         // mkdir
 #include "BlockQueue.h"
 #include "../buffer/Buffer.h"
-
+class Buffer;
 class Log {
 public:
     // 初始化日志实例（阻塞队列最大容量、日志保存路径、日志文件后缀）
