@@ -98,7 +98,7 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
     }
 }
 
-void Log::write(int level, const char *format, ...) {
+void Log::write(int level, const char * file, int line, const char *format, ...) {
     struct timeval now = {0, 0};
     gettimeofday(&now, nullptr);
     time_t tSec = now.tv_sec;
@@ -140,14 +140,19 @@ void Log::write(int level, const char *format, ...) {
                          t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
                          t.tm_hour, t.tm_min, t.tm_sec, now.tv_usec);
         buff_.moveWritePos(n);
+
         appendLogLevelTitle_(level);
+
+        int j = snprintf(buff_.beginWritePtr(), 128, "[%s:%d]", file, line);
+        buff_.moveWritePos(j);
 
         va_start(vaList, format);
         int m = vsnprintf(buff_.beginWritePtr(), buff_.writableBytes(), format, vaList);
         va_end(vaList);
 
-        buff_.moveWritePos(n);
+        buff_.moveWritePos(m);
         buff_.append("\n\0", 2);
+
         if(isAsync_ && deque_ && !deque_->full()){ // 异步方式（加入阻塞队列中，等待写线程读取日志信息）
             deque_->push_back(buff_.retrieveAllToStr());
         } else { // 同步方式
@@ -162,19 +167,19 @@ void Log::write(int level, const char *format, ...) {
 void Log::appendLogLevelTitle_(int level) {
     switch(level) {
         case 0:
-            buff_.append("[DEBUG]: ", 9);
+            buff_.append("[DEBUG]", 7);
             break;
         case 1:
-            buff_.append("[INFO] : ", 9);
+            buff_.append("[INFO] ", 7);
             break;
         case 2:
-            buff_.append("[WARN] : ", 9);
+            buff_.append("[WARN] ", 7);
             break;
         case 3:
-            buff_.append("[ERROR]: ", 9);
+            buff_.append("[ERROR]", 7);
             break;
         default:
-            buff_.append("[INFO] : ", 9);
+            buff_.append("[INFO] ", 7);
             break;
     }
 }

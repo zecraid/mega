@@ -21,7 +21,7 @@ public:
     static Log* Instance();
     static void flushLogThread();   // 异步写日志公有方法，调用私有方法asyncWrite
 
-    void write(int level, const char *format,...);  // 将输出内容按照标准格式整理
+    void write(int level, const char * file, int line, const char *format,...);  // 将输出内容按照标准格式整理
     void flush();
 
     int getLevel(); // 获取日志等级
