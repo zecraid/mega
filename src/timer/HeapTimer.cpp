@@ -3,15 +3,10 @@
 void HeapTimer::swapNode_(size_t i, size_t j) {
     assert(i >= 0 && i <heap_.size());
     assert(j >= 0 && j <heap_.size());
-//    std::swap(heap_[i], heap_[j]);
+    // exchange
     TimerNode tmp = heap_[i];
     heap_[i] = heap_[j];
     heap_[j] = tmp;
-    printf("swap:");
-    for(int i = 0;i < heap_.size();i++){
-        printf("%d ",heap_[i].id);
-    }
-    printf("\n");
     ref_[heap_[i].id] = i;
     ref_[heap_[j].id] = j;
 }
@@ -34,7 +29,6 @@ void HeapTimer::siftUp_(size_t i) {
 bool HeapTimer::siftDown_(size_t i, size_t n) {
     assert(i >= 0 && i < heap_.size());
     assert(n >= 0 && n <= heap_.size());    // n:共几个结点
-    printf("index = %zu n=%zu 开始下沉\n", i, n);
     size_t index = i;
     size_t child = 2 * index + 1;
     while(child < n) {
@@ -45,7 +39,6 @@ bool HeapTimer::siftDown_(size_t i, size_t n) {
             swapNode_(index, child);
             index = child;
             child = 2 * child + 1;
-            printf("index = %zu 下沉一次\n", i);
         } else
             break;
     }
@@ -91,10 +84,6 @@ void HeapTimer::add(int id, int timeOut, const std::function<void()> &callback) 
         ref_[id] = n;
         heap_.push_back({id,Clock::now() + std::chrono::milliseconds(timeOut), callback});
         siftUp_(n);
-        for(int i = 0;i < heap_.size();i++){
-            printf("%d ",heap_[i].id);
-        }
-        printf("\n");
     }
 }
 
