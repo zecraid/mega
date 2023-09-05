@@ -34,9 +34,9 @@ void HeapTimer::siftUp_(size_t i) {
 bool HeapTimer::siftDown_(size_t i, size_t n) {
     assert(i >= 0 && i < heap_.size());
     assert(n >= 0 && n <= heap_.size());    // n:共几个结点
-    printf("index = %zu 开始下沉\n", i);
+    printf("index = %zu n=%zu 开始下沉\n", i, n);
     size_t index = i;
-    size_t child = 2 * child + 1;
+    size_t child = 2 * index + 1;
     while(child < n) {
         if(child+1 < n && heap_[child+1] < heap_[child]) {
             child++;
@@ -65,9 +65,6 @@ void HeapTimer::del_(size_t index) {
             siftUp_(tmp);
         }
     }
-//    for(int i = 0;i < heap_.size();i++){
-//        printf("after pop:%d ",heap_[i].id);
-//    }
     ref_.erase(heap_.back().id);
     heap_.pop_back();
 }
