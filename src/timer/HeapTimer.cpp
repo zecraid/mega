@@ -34,6 +34,7 @@ void HeapTimer::siftUp_(size_t i) {
 bool HeapTimer::siftDown_(size_t i, size_t n) {
     assert(i >= 0 && i < heap_.size());
     assert(n >= 0 && n <= heap_.size());    // n:共几个结点
+    printf("index = %d 开始下沉", i);
     size_t index = i;
     size_t child = 2 * child + 1;
     while(child < n) {
