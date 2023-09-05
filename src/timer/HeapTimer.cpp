@@ -107,6 +107,7 @@ void HeapTimer::tick(){
     }
     while(!heap_.empty()){
         TimerNode node = heap_.front();
+        printf("front is %d",node.id);
         if(std::chrono::duration_cast<std::chrono::milliseconds>(node.expires - Clock::now()).count() > 0) {
             break;
         }
