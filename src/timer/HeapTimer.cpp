@@ -7,7 +7,11 @@ void HeapTimer::swapNode_(size_t i, size_t j) {
     TimerNode tmp = heap_[i];
     heap_[i] = heap_[j];
     heap_[j] = tmp;
-
+    printf("swap:");
+    for(int i = 0;i < heap_.size();i++){
+        printf("%d ",heap_[i].id);
+    }
+    printf("\n");
     ref_[heap_[i].id] = i;
     ref_[heap_[j].id] = j;
 }
