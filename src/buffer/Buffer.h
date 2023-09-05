@@ -39,7 +39,7 @@ public:
 
 private:
     char* beginPtr_();
-    const char *beginPtr_() const;
+    const char *beginPtrConst_() const;
     void makeSpace_(size_t len);
 
     std::vector<char> buffer_;

@@ -115,7 +115,7 @@ char *Buffer::beginPtr_() {
     return &buffer_[0];
 }
 
-const char *Buffer::beginWritePtrConst() const {
+const char *Buffer::beginPtrConst_() const {
     return &buffer_[0];
 }
 
