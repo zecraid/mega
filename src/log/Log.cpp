@@ -39,12 +39,12 @@ Log* Log::Instance() {
 }
 
 // 异步日志的写线程函数
-void Log::FlushLogThread() {
+void Log::flushLogThread() {
     Log::Instance()->asyncWrite_();
 }
 
 // 写线程真正的执行函数
-void Log::AsyncWrite_() {
+void Log::asyncWrite_() {
     std::string str = "";
     while (deque_->pop(str)){
         std::lock_guard<std::mutex> locker(mtx_);
@@ -76,10 +76,11 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
     time_t timer = time(nullptr);
     struct tm * sysTime = localtime(&timer);
     struct tm t = * sysTime;
+    char fileName[LOG_NAME_LEN];
     memset(fileName,0,sizeof(fileName));
     snprintf(fileName,LOG_NAME_LEN - 1,"%s/%04d_%02d_%02d%s",
              path_,t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, suffix_);
-    today_ = t.tm_mday;
+    toDay_ = t.tm_mday;
 
     {
         std::lock_guard<std::mutex> locker(mtx_);
@@ -106,7 +107,7 @@ void Log::write(int level, const char *format, ...) {
     va_list vaList;
 
     // 日志日期  日志行数  如果不是今天或者行数超了
-    if(today_ != t.tm_mday || (lineCount_ && (lineCount_ % MAX_LINES == 0))){
+    if(toDay_ != t.tm_mday || (lineCount_ && (lineCount_ % MAX_LINES == 0))){
         std::unique_lock<std::mutex> locker(mtx_);
         locker.unlock();
 
@@ -183,7 +184,7 @@ int Log::getLevel() {
     return level_;
 }
 
-void Log::setLevel(Level level) {
+void Log::setLevel(int level) {
     std::lock_guard<std::mutex> locker(mtx_);
     level_ = level;
 }
