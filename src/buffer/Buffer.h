@@ -24,7 +24,7 @@ public:
     void moveReadPosToEnd(const char *end); // 移动readPos到end位置
 
     void retrieveAll(); // 清空buffer，双坐标清0
-    std::string RetrieveAllToStr(); // 取出buffer内容，然后清空buffer，双坐标清0
+    std::string retrieveAllToStr(); // 取出buffer内容，然后清空buffer，双坐标清0
 
     const char *beginWritePtrConst() const; // 可写位置指针
     char *beginWritePtr(); // 可写位置指针

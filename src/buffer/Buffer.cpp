@@ -46,9 +46,9 @@ void Buffer::retrieveAll() {
     readPos_ = writePos_ = 0;
 }
 
-std::string Buffer::RetrieveAllToStr() {
+std::string Buffer::retrieveAllToStr() {
     std::string str(peek(), readableBytes());
-    RetrieveAll();
+    retrieveAll();
     return str;
 }
 
