@@ -36,8 +36,8 @@ bool HeapTimer::siftDown_(size_t i, size_t n) {
             swapNode_(index, child);
             index = child;
             child = 2 * child + 1;
-        }
-        break;
+        } else
+            break;
     }
     return index > i;
 }
@@ -49,7 +49,7 @@ void HeapTimer::del_(size_t index) {
     size_t n = heap_.size() - 1;
     assert(tmp <= n);
     // 如果就在队尾，就不用移动了
-    if(index < heap_.size()-1) {
+    if(index < heap_.size() - 1) {
         swapNode_(tmp, heap_.size() - 1);
         if(!siftDown_(tmp, n)) {
             siftUp_(tmp);
@@ -81,6 +81,10 @@ void HeapTimer::add(int id, int timeOut, const std::function<void()> &callback) 
         ref_[id] = n;
         heap_.push_back({id,Clock::now() + std::chrono::milliseconds(timeOut), callback});
         siftUp_(n);
+        for(int i = 0;i < heap_.size();i++){
+            printf("%d ",heap_[i].id);
+        }
+        printf("\n");
     }
 }
 
