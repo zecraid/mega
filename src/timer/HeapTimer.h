@@ -1,0 +1,56 @@
+#ifndef __HEAPTIMER_H__
+#define __HEAPTIMER_H__
+
+#include <queue>
+#include <unordered_map>
+#include <time.h>
+#include <algorithm>
+#include <arpa/inet.h>
+#include <functional>
+#include <assert.h>
+#include <chrono>
+
+#include "../log/Log.h"
+
+typedef std::function<void()> TimeoutCallBack;
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::milliseconds MS;
+typedef Clock::time_point TimeStamp;
+
+struct TimerNode {
+    int id;
+    TimeStamp expires;  // 超时时间点
+    TimeoutCallBack callback; // 回调function<void()>
+    bool operator<(const TimerNode& t) {    // 重载比较运算符
+        return expires < t.expires;
+    }
+    bool operator>(const TimerNode& t) {    // 重载比较运算符
+        return expires > t.expires;
+    }
+};
+
+class HeapTimer {
+public:
+    HeapTimer() { heap_.reserve(64); }  // 保留（扩充）容量
+    ~HeapTimer() { clear(); }
+
+    void adjust(int id, int newExpires);
+    void add(int id, int timeOut, const TimeoutCallBack& cb);
+    void doWork(int id);
+    void clear();
+    void tick();
+    void pop();
+    int getNextTick();
+
+private:
+    void del_(size_t i);
+    void siftUp_(size_t i); // id = i的定时器上浮
+    bool siftDown_(size_t i, size_t n); // id = i的定时器下沉
+    void swapNode_(size_t i, size_t j); // 交换两个定时器在小根堆中的位置
+
+    std::vector<TimerNode> heap_;
+    // key:id value:vector的下标
+    std::unordered_map<int, size_t> ref_;   // id对应的在heap_中的下标，方便用heap_的时候查找
+};
+
+#endif //!__HEAPTIMER_H__
