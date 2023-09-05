@@ -55,7 +55,9 @@ void HeapTimer::del_(size_t index) {
             siftUp_(tmp);
         }
     }
-    printf("pop %d\n",heap_.back().id);
+    for(int i = 0;i < heap_.size();i++){
+        printf("after pop:%d ",heap_[i].id);
+    }
     ref_.erase(heap_.back().id);
     heap_.pop_back();
 }
