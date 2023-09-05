@@ -55,6 +55,7 @@ void HeapTimer::del_(size_t index) {
             siftUp_(tmp);
         }
     }
+    printf("pop %d\n",heap_.back().id)
     ref_.erase(heap_.back().id);
     heap_.pop_back();
 }
@@ -107,7 +108,6 @@ void HeapTimer::tick(){
     }
     while(!heap_.empty()){
         TimerNode node = heap_.front();
-        printf("front is %d",node.id);
         if(std::chrono::duration_cast<std::chrono::milliseconds>(node.expires - Clock::now()).count() > 0) {
             break;
         }
