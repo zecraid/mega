@@ -115,10 +115,10 @@ void Log::write(int level, const char *format, ...) {
         char tail[36] = {0};
         snprintf(tail, 36, "%04d_%02d_%02d", t.tm_year + 1900, t.tm_mon + 1, t.tm_mday);
 
-        if(today_ != t.tm_mday) //时间不匹配，则替换为最新的日志文件名
+        if(toDay_ != t.tm_mday) //时间不匹配，则替换为最新的日志文件名
         {
             snprintf(newFile, LOG_NAME_LEN - 72, "%s/%s%s", path_, tail, suffix_);
-            today_ = t.tm_mday;
+            toDay_ = t.tm_mday;
             lineCount_ = 0;
         }else{ // 行数超过了,newFile = ./log/2023_07_27-1.log
             snprintf(newFile, LOG_NAME_LEN - 72, "%s/%s-%d%s", path_, tail, (lineCount_  / MAX_LINES), suffix_);
