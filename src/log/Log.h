@@ -63,7 +63,7 @@ private:
     do {\
         Log* log = Log::Instance();\
         if (log->isOpen() && log->getLevel() <= level) {\
-            log->write(level, format, ##__VA_ARGS__); \
+            log->write(level, __FILE__, __LINE__, format, ##__VA_ARGS__); \
             log->flush();\
         }\
     } while(0);
