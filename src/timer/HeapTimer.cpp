@@ -10,7 +10,7 @@ void HeapTimer::swapNode_(size_t i, size_t j) {
 
 void HeapTimer::siftUp_(size_t i) {
     assert(i >= 0 && i < heap_.size());
-    size_t parent_index = (i -1) / 2;
+    size_t parent_index = (i - 1) / 2;
     while(parent_index >= 0){
         if(heap_[parent_index] > heap_[i]){
             swapNode_(i, parent_index);
@@ -36,8 +36,8 @@ bool HeapTimer::siftDown_(size_t i, size_t n) {
             swapNode_(index, child);
             index = child;
             child = 2 * child + 1;
-        } else
-            break;
+        }
+        break;
     }
     return index > i;
 }
