@@ -9,8 +9,6 @@ int main() {
     timer.add(3, 3000, []() { std::cout << "Task 3 triggered" << std::endl; });
     timer.add(4, 900, []() { std::cout << "Task 4 triggered" << std::endl; });
 
-    timer.doWork(1);
-    timer.clear();
     while(true){
         timer.tick();
         std::this_thread::sleep_for(std::chrono::milliseconds(timer.getNextTick()));
