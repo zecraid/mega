@@ -11,6 +11,7 @@
 #include <thread>  // NOLINT
 #include <utility>
 #include <vector>
+#include <cassert>
 class ThreadPool{
 public:
     explicit ThreadPool(unsigned int size = std::thread::hardware_concurrency());
