@@ -26,7 +26,7 @@ bool HttpRequest::parse(Buffer* buff){
     // 读取数据开始
     while(buff->readableBytes() && state_ != FINISH){
         // 从buff中的读指针开始到读指针结束，这块区域是未读取得数据并去处"\r\n"，返回有效数据得行末指针
-        const char* lineend = std::search(buff->peek(), buff->beginWriteConst(), END, END+2);
+        const char* lineend = std::search(buff->peek(), buff->beginWritePtrConst(), END, END+2);
         std::string line(buff->peek(), lineend);
         switch (state_)
         {
@@ -170,7 +170,7 @@ void HttpRequest::parseFromUrlencoded_(){
                 value = body_.substr(j, i - j);
                 j = i + 1;
                 post_[key] = value;
-                debug("%s = %s\n", key.c_str(), value.c_str());
+                LOG_DEBUG("%s = %s\n", key.c_str(), value.c_str());
                 break;
             default:
                 break;
@@ -239,7 +239,7 @@ bool HttpRequest::userRegister(const std::string &name, const std::string &pwd) 
     while(MYSQL_ROW row = mysql_fetch_row(res)) {
         std::string username(row[0]);
         if(name == username) {
-            info("user used\n");
+            LOG_INFO("user used\n");
             mysql_free_result(res);
             return false;
         }
