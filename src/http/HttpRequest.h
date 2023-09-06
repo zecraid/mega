@@ -1,5 +1,5 @@
-#ifndef __HTTP_REQUEST_H__
-#define __HTTP_REQUEST_H__
+#ifndef __HTTPREQUEST_H__
+#define __HTTPREQUEST_H__
 
 #include <unordered_map>
 #include <unordered_set>
@@ -13,7 +13,6 @@
 #include "../pool/SqlConnectionPool.h"
 #include "../pool/SqlConnectionRAII.h"
 
-class HttpBuffer;
 class HttpRequest {
 public:
     enum PARSE_STATE{
@@ -60,4 +59,4 @@ private:
 };
 
 
-#endif //__HTTP_REQUEST_H__
+#endif //!__HTTPREQUEST_H__

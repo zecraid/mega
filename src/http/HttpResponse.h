@@ -1,5 +1,5 @@
-#ifndef __HTTP_RESPONSE_H__
-#define __HTTP_RESPONSE_H__
+#ifndef __HTTPRESPONSE_H__
+#define __HTTPRESPONSE_H__
 
 #include <unordered_map>
 #include <fcntl.h>       // open
@@ -10,7 +10,6 @@
 #include "../buffer/Buffer.h"
 #include "../log/Log.h"
 
-class Buffer;
 class HttpResponse {
 public:
     HttpResponse();
@@ -48,4 +47,4 @@ private:
 };
 
 
-#endif //__HTTP_RESPONSE_H__
+#endif //!__HTTPRESPONSE_H__
