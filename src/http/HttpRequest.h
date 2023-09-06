@@ -9,7 +9,7 @@
 #include <mysql/mysql.h>  //mysql
 
 #include "../buffer/Buffer.h"
-#include "../logger/Logger.h"
+#include "../log/Log.h"
 #include "../pool/SqlConnectionPool.h"
 #include "../pool/SqlConnectionRAII.h"
 
