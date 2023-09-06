@@ -34,6 +34,7 @@ public:
     const char* getIP() const;
     sockaddr_in getAddr() const;
 
+    static bool isET;
     static const char* srcDir;
     static std::atomic<int> userCount;  // 原子，支持锁
 

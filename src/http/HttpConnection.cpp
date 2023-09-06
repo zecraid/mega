@@ -5,8 +5,8 @@ std::atomic<int> HttpConnection::userCount;
 bool HttpConnection::isET;
 
 HttpConnection::HttpConnection() {
-    readBuff_ = std::make_unique<HttpBuffer>();
-    writeBuff_ = std::make_unique<HttpBuffer>();
+    readBuff_ = std::make_unique<Buffer>();
+    writeBuff_ = std::make_unique<Buffer>();
     writeBuff_->retrieveAll();
     readBuff_->retrieveAll();
 
