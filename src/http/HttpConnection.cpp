@@ -29,7 +29,7 @@ void HttpConnection::init(int sockFd, const sockaddr_in &addr) {
     writeBuff_->retrieveAll();
     readBuff_->retrieveAll();
     isClose_ = false;
-    LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, GetIP(), GetPort(), (int)userCount);
+    LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, getIP(), getPort(), (int)userCount);
 }
 
 void HttpConnection::close() {
@@ -37,7 +37,7 @@ void HttpConnection::close() {
     if(!isClose_){
         isClose_ = true;
         userCount--;
-        close(fd_);
+        ::close(fd_);
         LOG_INFO("Client[%d](%s:%d) quit, UserCount:%d", fd_, getIP(), getPort(), (int)userCount);
     }
 }
@@ -75,7 +75,7 @@ ssize_t HttpConnection::write(int* saveErrno){
         } else {
             iov_[0].iov_base = (uint8_t*)iov_[0].iov_base + len;
             iov_[0].iov_len -= len;
-            writeBuff_->retrieve(len);
+            writeBuff_->moveReadPos(len);
         }
     } while ( isET ||toWriteBytes() > 10240); // ET:边沿触发要一次性全部写入
     return len;
