@@ -6,11 +6,11 @@
 
 int main() {
     std::unique_ptr<ThreadPool> pool = std::make_unique<ThreadPool>();
-    pool->addTask([this](){
+    pool->addTask([](){
         printf("helllo");
     });
 
-    pool->addTask([this](){
+    pool->addTask([](){
         printf("qvshiba");
     });
     return 0;
