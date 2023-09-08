@@ -31,6 +31,7 @@ void WebServer::init(int logLevel, int logQueSize, const char *sqlLocal, uint16_
 
     printf("Resource directory: %s\n",srcDir);
     HttpConnection::srcDir = srcDir;
+    HttpConnection::isET = true;
     printf("Database IP: %s\n",sqlLocal);
     printf("Database user: %s\n",sqlUser);
     printf("Database name: %s\n",dbName);

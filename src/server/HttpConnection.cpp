@@ -1,4 +1,6 @@
 #include "HttpConnection.h"
+HttpConnection::isET;
+HttpConnection::srcDir;
 
 HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     socket_ = std::make_unique<Socket>();
