@@ -27,6 +27,7 @@ public:
     int getLevel(); // 获取日志等级
     void setLevel(int level); // 设置日志等级
     bool isOpen() { return isOpen_; } // 返回是否开启日志系统
+    const char* getLevelStr() const;
 
 private:
     Log();

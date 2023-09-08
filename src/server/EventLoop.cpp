@@ -2,6 +2,7 @@
 #include "Epoll.h"
 #include "Channel.h"
 #include "../pool/ThreadPool.h"
+#include "../timer/HeapTimer.h"
 #include <vector>
 #include <thread>
 

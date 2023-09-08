@@ -193,3 +193,13 @@ void Log::setLevel(int level) {
     std::lock_guard<std::mutex> locker(mtx_);
     level_ = level;
 }
+
+const char *Log::getLevelStr() const {
+    switch (level_) {
+        case 0: return "DEBUG";
+        case 1: return "INFO";
+        case 2: return "WARN";
+        case 3: return "ERROR";
+        default: return "UNKNOWN";
+    }
+}
