@@ -57,6 +57,7 @@ ssize_t HttpConnection::write(int *saveErrno) {
 
 void HttpConnection::process() {
     std::string content = read_buf_->retrieveAllToStr();
+    LOG_INFO("msg get:%s",content.c_str());
     write_buf_->append(content);
     write_buf_->append("+++hello");
 }
