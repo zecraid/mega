@@ -1,4 +1,8 @@
 #include "WebServer.h"
+#include "../log/Log.h"
+#include "../pool/SqlConnectionPool.h"
+#include "../server/Util.h"
+
 WebServer::WebServer(const char *ip, uint16_t port) {
     Util::welcome();
     main_reactor_ = std::make_unique<EventLoop>();
@@ -44,15 +48,28 @@ void WebServer::start() {
     }
     LOG_INFO("Web Server Start...SUCCESS");
     main_reactor_->loop();
+    // 由于创建了Acceptor实例，并且绑定main_reactor,那么main_reactor的epoll_参数的红黑树上就挂载了ListenFd，因为main_reactor至于要监听新连接
+    // 当有新连接后就会调用WebServer::newConnection，在这个函数里面会选择sub_reactor创建HTTPConnection
+    //
+    // 启动main_reactor->loop()
 }
 
 ST WebServer::newConnection(int fd) {
     assert(fd != -1);
     uint16_t random = fd % sub_reactors_.size();
+    //
     std::unique_ptr<HttpConnection> hconn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
-
-    hconn->setRecvCallback(); // 设置channel的读回调函数用于接受Request请求
+    std::function<void(int)> cb = std::bind(&WebServer::deleteConnection, this, std::placeholders::_1);
+    hconn->setCloseConnectionCallback(cb);
+    hconn->setRequestRecvCallback(); // 设置channel的读回调函数用于接受Request请求
 //    hconn->setResponseSendCallback(); // 设置channel的写回调函数用于处理Request请求组装
     connections_[fd] = std::move(hconn);
+    return ST_SUCCESS;
+}
+
+ST WebServer::deleteConnection(int fd) {
+    auto it = connections_.find(fd);
+    assert(it != connections_.end());
+    connections_.erase(fd);
     return ST_SUCCESS;
 }

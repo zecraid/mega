@@ -1,6 +1,4 @@
 #include "HttpConnection.h"
-bool HttpConnection::isET;
-const char* HttpConnection::srcDir;
 
 HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     socket_ = std::make_unique<Socket>();
@@ -14,8 +12,6 @@ HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     write_buf_ = std::make_unique<Buffer>();
     read_buf_->retrieveAll();
     write_buf_->retrieveAll();
-    request_ = std::make_unique<HttpRequest>();
-    response_ = std::make_unique<HttpResponse>();
     state_ = State::CONNECTED;
 }
 
@@ -24,12 +20,7 @@ HttpConnection::~HttpConnection() {
 }
 
 void HttpConnection::close() {
-    response_->unmapFile();
-    if(!isClose_){
-        isClose_ = true;
-        ::close(socket_->getFd());
-        LOG_INFO("Client[%d](%s) quit", getFd(), getAddr().c_str());
-    }
+    ::close(socket_->getFd());
 }
 
 void HttpConnection::init(int fd, EventLoop *loop) {
@@ -37,8 +28,7 @@ void HttpConnection::init(int fd, EventLoop *loop) {
     socket_->setFd(fd);
     read_buf_->retrieveAll();
     write_buf_->retrieveAll();
-    isClose_ = false;
-    LOG_INFO("Client[%d](%s) quit ", getFd(), getAddr().c_str());
+    LOG_INFO("HttpConnection init");
 }
 
 ssize_t HttpConnection::read(int *saveErrno) {
@@ -49,75 +39,29 @@ ssize_t HttpConnection::read(int *saveErrno) {
             *saveErrno = errno;
             break;
         }
-    } while (isET);
+    } while (true);
     return len;
 }
 
 ssize_t HttpConnection::write(int *saveErrno) {
     ssize_t len = -1;
     do {
-        len = writev(getFd(), iov_, iovCnt_); // 将iov的内容写到fd中
+        len = write_buf_->writeFd(getFd(), saveErrno);
         if(len <= 0){
             *saveErrno = errno;
             break;
         }
-        if(iov_[0].iov_len + iov_[1].iov_len  == 0) { break; } /* 传输结束 */
-        else if(static_cast<size_t>(len) > iov_[0].iov_len) {
-            iov_[1].iov_base = (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len);
-            iov_[1].iov_len -= (len - iov_[0].iov_len);
-            if(iov_[0].iov_len) {
-                write_buf_->retrieveAll();
-                iov_[0].iov_len = 0;
-            }
-        }
-        else {
-            iov_[0].iov_base = (uint8_t*)iov_[0].iov_base + len;
-            iov_[0].iov_len -= len;
-            write_buf_->moveReadPos(len);
-        }
-    } while (isET || writeBytesLength() > 10240);
+    } while (true);
     return len;
 }
 
-bool HttpConnection::process() {
-    LOG_INFO("Request process");
-    request_->init();
-    if(read_buf_->readableBytes() <= 0){
-        return false;
-    } else if(request_->parse(read_buf_.get())){
-        LOG_DEBUG("%s", request_->path().c_str());
-        response_->init(srcDir, request_->path(), request_->isKeepAlive(), 200);
-    } else {
-        response_->init(srcDir, request_->path(), false, 400);
-    }
-    response_->makeResponse(write_buf_.get());// 生成响应报文放入writeBuff_中
-    std::string req_conent(write_buf_->peek(),write_buf_->readableBytes());
-    LOG_INFO("%s", req_conent.c_str());
-    // 响应头
-    iov_[0].iov_base = const_cast<char*>(write_buf_->peek());
-    iov_[0].iov_len = write_buf_->readableBytes();
-    iovCnt_ = 1;
-
-    // 文件
-    if(response_->fileLen() > 0 && response_->file()){
-        iov_[1].iov_base = response_->file();
-        iov_[1].iov_len = response_->fileLen();
-        iovCnt_ = 2;
-    }
-    LOG_DEBUG("filesize:%d, %d  to %d", response_->fileLen() , iovCnt_, writeBytesLength());
-    return true;
+void HttpConnection::process() {
+    std::string content = read_buf_->retrieveAllToStr();
+    write_buf_->append(content);
+    write_buf_->append("+++hello");
 }
 
-void HttpConnection::setCloseConnectionCallback(const std::function<void(int)> &fn) {
-    close_connection_ = std::move(fn);
-}
-
-void HttpConnection::closeConnection() {
-    close_connection_(socket_->getFd());
-}
-
-void HttpConnection::setRequestRecvCallback() {
-//    std::function<void()> cb = std::bind(&HttpConnection::read, this);
+void HttpConnection::setRecvCallback() {
     std::function<void()> cb = [this](){
         int saveErrno = -1;
         read(&saveErrno);
@@ -128,29 +72,5 @@ void HttpConnection::setRequestRecvCallback() {
     channel_->setReadCallback(cb);
 }
 
-//void HttpConnection::setResponseSendCallback() {
-//    std::function<void()> cb = [](){
-//        int saveErrno = -1;
-//
-//        if(process()){ // 处理接受到的数据
-//            write();
-//        }
-//    };
-//    channel_->setWriteCallback(cb);
-//}
 
-int HttpConnection::getFd() const {
-    return socket_->getFd();
-}
 
-std::string HttpConnection::getAddr() const {
-    return socket_->getAddr();
-}
-
-bool HttpConnection::isKeepAlive() const {
-    return request_->isKeepAlive();
-}
-
-int HttpConnection::writeBytesLength() {
-    return iov_[0].iov_len + iov_[1].iov_len;
-}

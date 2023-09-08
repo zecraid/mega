@@ -1,5 +1,6 @@
 #ifndef __WEBSERVER_H__
 #define __WEBSERVER_H__
+
 #include <unordered_map>
 #include <fcntl.h>       // fcntl()
 #include <unistd.h>      // close()
@@ -8,13 +9,15 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "State.h"
-#include "EventLoop.h"
-#include "Acceptor.h"
+#include "../server/State.h"
+#include "../server/EventLoop.h"
+#include "../server/Acceptor.h"
 #include "HttpConnection.h"
 #include "../pool/ThreadPool.h"
 #include "../timer/HeapTimer.h"
+
 class WebServer {
+public:
     WebServer(const char* ip, uint16_t port);
     ~WebServer() = default;
     void init(int logLevel, int logQueSize,
@@ -22,8 +25,13 @@ class WebServer {
               const char* dbName, int connPoolNum, const char *srcDir);
 
     void start();
+
     ST newConnection(int fd);
     ST deleteConnection(int fd);
+
+public:
+//    static std::atomic<int> userCount;  // 原子，支持锁
+
 private:
     std::unique_ptr<EventLoop> main_reactor_;
     std::vector<std::unique_ptr<EventLoop>> sub_reactors_;
