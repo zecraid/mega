@@ -1,6 +1,6 @@
 #include "HttpConnection.h"
-static bool HttpConnection::isET;
-static const char* HttpConnection::srcDir;
+bool HttpConnection::isET;
+const char* HttpConnection::srcDir;
 
 HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     socket_ = std::make_unique<Socket>();
