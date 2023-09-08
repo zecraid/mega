@@ -30,15 +30,15 @@ public:
     ST deleteConnection(int fd);
 
 public:
-    static std::atomic<int> userCount;  // 原子，支持锁
+//    static std::atomic<int> userCount;  // 原子，支持锁
 
 private:
     std::unique_ptr<EventLoop> main_reactor_;
     std::vector<std::unique_ptr<EventLoop>> sub_reactors_;
     std::unique_ptr<Acceptor> acceptor_;
 
-    std::unique_ptr<HeapTimer> timer_;
-    int timeoutMS_; // 超时事件
+//    std::unique_ptr<HeapTimer> timer_;
+//    int timeoutMS_; // 超时事件
     std::unique_ptr<ThreadPool> thread_pool_;
     std::unordered_map<int, std::unique_ptr<HttpConnection>> connections_;
 };

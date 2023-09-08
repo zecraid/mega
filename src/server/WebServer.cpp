@@ -13,7 +13,7 @@ WebServer::WebServer(const char *ip, uint16_t port) {
     unsigned int size = std::thread::hardware_concurrency();
     thread_pool_ = std::make_unique<ThreadPool>(size);
 
-    timer_ = std::make_unique<HeapTimer>();
+//    timer_ = std::make_unique<HeapTimer>();
 
     for(size_t i = 0; i < size; i++){
         std::unique_ptr<EventLoop> sub_reactor = std::make_unique<EventLoop>();
@@ -25,7 +25,7 @@ void WebServer::init(int logLevel, int logQueSize, const char *sqlLocal, uint16_
                      const char *sqlPwd, const char *dbName, int connPoolNum, const char *srcDir) {
     printf("========== SERVER INIT ==========\n");
     Log::Instance()->init(logLevel, "./log", ".log", logQueSize);
-    printf("Log Level:%d(%s)",logLevel, Log::Instance()->getLevelStr());
+    printf("Log Level:%d(%s)\n",logLevel, Log::Instance()->getLevelStr());
     printf("Log directory: %s\n","./log");
     printf("Log mode: %s\n",logQueSize == 0? "normal":"async");
 
@@ -51,14 +51,7 @@ void WebServer::start() {
     // 由于创建了Acceptor实例，并且绑定main_reactor,那么main_reactor的epoll_参数的红黑树上就挂载了ListenFd，因为main_reactor至于要监听新连接
     // 当有新连接后就会调用WebServer::newConnection，在这个函数里面会选择sub_reactor创建HTTPConnection
     //
-    // 启动main_reactor->loop(),
-
-//    int timeMS = -1;
-//    while(true){
-//        if(timeoutMS_ > 0){
-//            timeMS = timer_->getNextTick();
-//        }
-//    }
+    // 启动main_reactor->loop()
 }
 
 ST WebServer::newConnection(int fd) {

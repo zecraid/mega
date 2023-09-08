@@ -8,7 +8,7 @@ Acceptor::Acceptor(EventLoop *loop, const char *ip, uint16_t port) {
     assert(socket_->setReuseAddr() == ST_SUCCESS); // 设置端口复用
     assert(socket_->bind(ip, port) == ST_SUCCESS); // 绑定地址结构
     assert(socket_->listen() == ST_SUCCESS); // 绑定MAXCONN
-//    socket_->setNonBlocking();
+    socket_->setNonBlocking();
 
     channel_ = std::make_unique<Channel>(loop, socket_.get()); // 为ListenFd创建channel
     std::function<void()> cb = std::bind(&Acceptor::acceptConnection, this); // 由于是ListenFd，它的READ事件就是创建Client
