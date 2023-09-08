@@ -27,8 +27,8 @@ void HttpConnection::close() {
     response_->unmapFile();
     if(!isClose_){
         isClose_ = true;
-        close(fd)_;
-        LOG_INFO("Client[%d](%s) quit", fd_, getAddr().c_str());
+        close(socket_->getFd());
+        LOG_INFO("Client[%d](%s) quit", getFd(), getAddr().c_str());
     }
 }
 
@@ -38,7 +38,7 @@ void HttpConnection::init(int fd, EventLoop *loop) {
     read_buf_->retrieveAll();
     write_buf_->retrieveAll();
     isClose_ = false;
-    LOG_INFO("Client[%d](%s) quit ", fd_, getAddr().c_str());
+    LOG_INFO("Client[%d](%s) quit ", getFd(), getAddr().c_str());
 }
 
 ssize_t HttpConnection::read(int *saveErrno) {
@@ -83,13 +83,13 @@ bool HttpConnection::process() {
     request_->init();
     if(read_buf_->readableBytes() <= 0){
         return false;
-    } else if(request_->parse(read_buf_)){
-        LOG_DEBUG("%s", request_.path().c_str());
-        response_->init(srcDir, request_.path(), request_.IsKeepAlive(), 200);
+    } else if(request_->parse(read_buf_.get())){
+        LOG_DEBUG("%s", request_->path().c_str());
+        response_->init(srcDir, request_->path(), request_->isKeepAlive(), 200);
     } else {
-        response_->init(srcDir, request_.path(), false, 400);
+        response_->init(srcDir, request_->path(), false, 400);
     }
-    response_->makeResponse(write_buf_);// 生成响应报文放入writeBuff_中
+    response_->makeResponse(write_buf_.get());// 生成响应报文放入writeBuff_中
     // 响应头
     iov_[0].iov_base = const_cast<char*>(write_buf_->peek());
     iov_[0].iov_len = write_buf_->readableBytes();
