@@ -41,22 +41,24 @@ void HttpConnection::init(int fd, EventLoop *loop) {
     LOG_INFO("Client[%d](%s) quit ", fd_, getAddr().c_str());
 }
 
-ssize_t HttpConnection::read() {
+ssize_t HttpConnection::read(int *saveErrno) {
     ssize_t len = -1;
     do {
         len = read_buf_->readFd(getFd(), saveErrno);
         if(len <= 0){
+            *saveErrno = errno;
             break;
         }
     } while (isET);
     return len;
 }
 
-ssize_t HttpConnection::write() {
+ssize_t HttpConnection::write(int *saveErrno) {
     ssize_t len = -1;
     do {
         len = writev(getFd(), iov_, iovCnt_); // 将iov的内容写到fd中
         if(len <= 0){
+            *saveErrno = errno;
             break;
         }
         if(iov_[0].iov_len + iov_[1].iov_len  == 0) { break; } /* 传输结束 */
@@ -114,22 +116,25 @@ void HttpConnection::closeConnection() {
 void HttpConnection::setRequestRecvCallback() {
 //    std::function<void()> cb = std::bind(&HttpConnection::read, this);
     std::function<void()> cb = [](){
-        read();
+        int saveErrno = -1;
+        read(&saveErrno);
         if(process()){
-            write();
+            write(&saveErrno);
         }
     };
     channel_->setReadCallback(cb);
 }
 
-void HttpConnection::setResponseSendCallback() {
-    std::function<void()> cb = [](){
-        if(process()){ // 处理接受到的数据
-            write();
-        }
-    };
-    channel_->setWriteCallback(cb);
-}
+//void HttpConnection::setResponseSendCallback() {
+//    std::function<void()> cb = [](){
+//        int saveErrno = -1;
+//
+//        if(process()){ // 处理接受到的数据
+//            write();
+//        }
+//    };
+//    channel_->setWriteCallback(cb);
+//}
 
 int HttpConnection::getFd() const {
     return socket_->getFd();
