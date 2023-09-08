@@ -65,9 +65,8 @@ void HttpConnection::setRecvCallback() {
     std::function<void()> cb = [this](){
         int saveErrno = -1;
         read(&saveErrno);
-        if(process()){
-            write(&saveErrno);
-        }
+        process();
+        write(&saveErrno);
     };
     channel_->setReadCallback(cb);
 }
