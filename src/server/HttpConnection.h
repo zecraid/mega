@@ -35,6 +35,8 @@ public:
     ssize_t write(int *saveErrno);
     void process();
 
+    int getFd() const;
+    std::string getAddr() const; // 获取完整Client IP地址
     void setRecvCallback();
 
 private:

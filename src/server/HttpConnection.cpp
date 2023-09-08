@@ -72,5 +72,13 @@ void HttpConnection::setRecvCallback() {
     channel_->setReadCallback(cb);
 }
 
+int HttpConnection::getFd() const {
+    return socket_->getFd();
+}
+
+std::string HttpConnection::getAddr() const {
+    return socket_->getAddr();
+}
+
 
 
