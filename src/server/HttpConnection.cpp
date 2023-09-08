@@ -64,6 +64,7 @@ void HttpConnection::process() {
 
 void HttpConnection::setRecvCallback() {
     std::function<void()> cb = [this](){
+        LOG_INFO("HttpConn read Event!!!!!");
         int saveErrno = -1;
         read(&saveErrno);
         process();
