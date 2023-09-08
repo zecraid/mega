@@ -27,8 +27,8 @@ public:
     void close();
 
     void init(int fd, EventLoop *loop);
-    ssize_t read();
-    ssize_t write();
+    ssize_t read(int *saveErrno);
+    ssize_t write(int *saveErrno);
     void closeConnection();
     void setCloseConnectionCallback(std::function<void(int)> const &fn);
     void setRequestRecvCallback();

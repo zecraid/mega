@@ -27,7 +27,7 @@ void HttpConnection::close() {
     response_->unmapFile();
     if(!isClose_){
         isClose_ = true;
-        close(socket_->getFd());
+        ::close(socket_->getFd());
         LOG_INFO("Client[%d](%s) quit", getFd(), getAddr().c_str());
     }
 }
