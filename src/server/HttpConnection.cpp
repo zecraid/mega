@@ -1,6 +1,4 @@
 #include "HttpConnection.h"
-const char* HttpConnetion::srcDir;
-bool HttpConnetion::isET;
 
 HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     socket_ = std::make_unique<Socket>();
@@ -73,7 +71,7 @@ ssize_t HttpConnection::write(int *saveErrno) {
         else {
             iov_[0].iov_base = (uint8_t*)iov_[0].iov_base + len;
             iov_[0].iov_len -= len;
-            write_buf_->moveReadPos(len)
+            write_buf_->moveReadPos(len);
         }
     } while (isET || writeBytesLength() > 10240);
     return len;
@@ -115,7 +113,7 @@ void HttpConnection::closeConnection() {
 
 void HttpConnection::setRequestRecvCallback() {
 //    std::function<void()> cb = std::bind(&HttpConnection::read, this);
-    std::function<void()> cb = [](){
+    std::function<void()> cb = [this](){
         int saveErrno = -1;
         read(&saveErrno);
         if(process()){
