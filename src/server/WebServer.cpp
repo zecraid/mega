@@ -62,7 +62,7 @@ void WebServer::start() {
 ST WebServer::newConnection(int fd) {
     assert(fd != -1);
     uint16_t random = fd % sub_reactors_.size();
-
+    //
     std::unique_ptr<HttpConnection> hconn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
     std::function<void(int)> cb = std::bind(&WebServer::deleteConnection, this, std::placeholders::_1);
     hconn->setCloseConnectionCallback(cb);
