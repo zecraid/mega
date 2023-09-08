@@ -33,25 +33,27 @@ void HttpConnection::init(int fd, EventLoop *loop) {
 
 ssize_t HttpConnection::read(int *saveErrno) {
     ssize_t len = -1;
-    do {
-        len = read_buf_->readFd(getFd(), saveErrno);
-        if(len <= 0){
-            *saveErrno = errno;
-            break;
-        }
-    } while (true);
+    len = read_buf_->readFd(getFd(), saveErrno);
+//    do {
+//        len = read_buf_->readFd(getFd(), saveErrno);
+//        if(len <= 0){
+//            *saveErrno = errno;
+//            break;
+//        }
+//    } while (true);
     return len;
 }
 
 ssize_t HttpConnection::write(int *saveErrno) {
     ssize_t len = -1;
-    do {
-        len = write_buf_->writeFd(getFd(), saveErrno);
-        if(len <= 0){
-            *saveErrno = errno;
-            break;
-        }
-    } while (true);
+    len = write_buf_->writeFd(getFd(), saveErrno);
+//    do {
+//        len = write_buf_->writeFd(getFd(), saveErrno);
+//        if(len <= 0){
+//            *saveErrno = errno;
+//            break;
+//        }
+//    } while (true);
     return len;
 }
 
