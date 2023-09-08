@@ -92,7 +92,7 @@ bool HttpConnection::process() {
     }
     response_->makeResponse(write_buf_.get());// 生成响应报文放入writeBuff_中
     std::string req_conent(write_buf_->peek(),write_buf_->readableBytes());
-    LOG_INFO(req_conent);
+    LOG_INFO("%s", req_conent.c_str());
     // 响应头
     iov_[0].iov_base = const_cast<char*>(write_buf_->peek());
     iov_[0].iov_len = write_buf_->readableBytes();
