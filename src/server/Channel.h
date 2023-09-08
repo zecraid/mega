@@ -4,6 +4,8 @@
 #include <functional>
 #include "EventLoop.h"
 #include "Socket.h"
+class EventLoop;
+class Socket;
 class Channel {
 public:
     Channel(EventLoop *loop, Socket *socket);

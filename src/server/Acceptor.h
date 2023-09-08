@@ -6,6 +6,9 @@
 #include "EventLoop.h"
 #include "Socket.h"
 #include "Channel.h"
+class EventLoop;
+class Socket;
+class Channel;
 class Acceptor {
 public:
     Acceptor(EventLoop *loop, const char* ip, uint16_t port);

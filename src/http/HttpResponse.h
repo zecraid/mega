@@ -9,7 +9,7 @@
 
 #include "../buffer/Buffer.h"
 #include "../log/Log.h"
-
+class Buffer;
 class HttpResponse {
 public:
     HttpResponse();

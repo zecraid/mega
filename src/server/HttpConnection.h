@@ -14,6 +14,12 @@
 #include "Socket.h"
 #include "Channel.h"
 
+class EventLoop;
+class Socket;
+class Channel;
+class Buffer;
+class HttpRequest;
+class HttpResponse;
 class HttpConnection {
 public:
     enum State {
