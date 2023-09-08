@@ -14,6 +14,8 @@
 #include "HttpConnection.h"
 #include "../pool/ThreadPool.h"
 #include "../timer/HeapTimer.h"
+#include "Util.h"
+#include "../pool/SqlConnectionPool.h"
 class WebServer {
     WebServer(const char* ip, uint16_t port);
     ~WebServer() = default;
