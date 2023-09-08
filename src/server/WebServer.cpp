@@ -50,7 +50,7 @@ ST WebServer::newConnection(int fd) {
     assert(fd != -1);
     uint16_t random = fd % sub_reactors_.size();
     std::unique_ptr<HttpConnection> hconn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
-
+    LOG_INFO("get new connection:fd = %d",fd);
     hconn->setRecvCallback(); // 设置channel的读回调函数用于接受Request请求
 //    hconn->setResponseSendCallback(); // 设置channel的写回调函数用于处理Request请求组装
     connections_[fd] = std::move(hconn);
