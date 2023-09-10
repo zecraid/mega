@@ -34,7 +34,7 @@ ssize_t HttpConnection::read(int *saveErrno) {
         len = read_buf_->readFd(getFd(), saveErrno);
         LOG_INFO("第%d次读,len=%d",i, len);
         i++;
-        if (len <= 0) {,
+        if (len <= 0) {
             break;
         }
     } while (true); // ET:边沿触发要一次性全部读出
