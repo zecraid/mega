@@ -21,6 +21,7 @@ ST Acceptor::acceptConnection() {
     if(socket_->accept(client_fd) != ST_SUCCESS){
         return ST_ACCEPTOR_ERROR;
     }
+    LOG_INFO("新连接来咯：fd=%d",client_fd);
     if(new_connection_callback_){
         new_connection_callback_(client_fd); // WebServer::newConnection(int fd)
     }
