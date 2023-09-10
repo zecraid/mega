@@ -51,7 +51,6 @@ void WebServer::newConnection(int fd) {
     std::unique_ptr<HttpConnection> conn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
     std::function<void(int)> cb = std::bind(&WebServer::closeConnection, this, std::placeholders::_1);
     conn->setCloseConnectionCallback(cb);
-    conn->se
 //    connections_[fd] = std::move(conn);
     LOG_INFO("new client Add fd = %d, address:%s",conn->getFd(), conn->getAddr().c_str());
 //    return ST_SUCCESS;
