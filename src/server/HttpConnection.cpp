@@ -123,3 +123,7 @@ int HttpConnection::writeBytesLength() {
 bool HttpConnection::isKeepAlive() {
     return request_->isKeepAlive();
 }
+
+int HttpConnection::getFd() const {
+    return socket_->getFd();
+}
