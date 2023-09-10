@@ -16,7 +16,7 @@
 class EventLoop;
 class Socket;
 class Acceptor;
-class HttpConnection;
+class Connection;
 class ThreadPool;
 class Log;
 class HeapTimer;
@@ -33,9 +33,9 @@ public:
     ST newConnection(int fd);
     ST closeConnection(int fd);
 
-//    void onConnect(std::function<void(Connection *)> fn);
-//    void onRecv(std::function<void(Connection *)> fn);
-//    void newConnect(std::function<void(int)> fn); // Acceptor回调函数
+    void onConnect(std::function<void(Connection *)> fn);
+    void onRecv(std::function<void(Connection *)> fn);
+    void newConnect(std::function<void(Connection *)> fn); // Acceptor回调函数
 
 public:
     static std::atomic<int> userCount;  // 用户数量，原子，支持锁
