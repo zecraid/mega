@@ -22,6 +22,7 @@ HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     request_ = std::make_unique<HttpRequest>();
     response_ = std::make_unique<HttpResponse>();
     state_ = ConnState::CONNECTED;
+    LOG_INFO("创建HttpConnection成功fd = %d",socket_->getFd());
 }
 
 HttpConnection::~HttpConnection() {
