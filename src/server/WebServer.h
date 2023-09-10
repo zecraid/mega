@@ -51,9 +51,9 @@ private:
 
     std::unique_ptr<ThreadPool> thread_pool_;
 
-    std::function<void(Connection *)> on_connect_;
-    std::function<void(Connection *)> on_recv_;
-    std::function<void(Connection *)> new_connect_;
+//    std::function<void(Connection *)> on_connect_;
+//    std::function<void(Connection *)> on_recv_;
+//    std::function<void(Connection *)> new_connect_;
 };
 
 #endif //!__WEBSERVER_H__
