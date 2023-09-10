@@ -22,7 +22,6 @@ Socket::~Socket() {
 }
 
 int Socket::getFd() const {
-    LOG_INFO("Socket::getFd() fd = %d", fd_);
     return fd_;
 }
 
