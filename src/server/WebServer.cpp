@@ -46,14 +46,13 @@ void WebServer::start() {
 
 void WebServer::newConnection(int fd) {
     assert(fd != -1);
-    LOG_INFO("new client Comein");
-//    uint16_t random = fd % sub_reactors_.size();
-//    std::unique_ptr<HttpConnection> conn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
+    uint16_t random = fd % sub_reactors_.size();
+    std::unique_ptr<HttpConnection> conn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
 //    std::function<void(int)> cb = std::bind(&WebServer::closeConnection, this, std::placeholders::_1);
 //    conn->setCloseConnectionCallback(cb);
 
 //    connections_[fd] = std::move(conn); // err
-    LOG_INFO("new client Add fd = %d",fd);
+//    LOG_INFO("new client Add fd = %d",fd);
 //    return ST_SUCCESS;
 }
 
