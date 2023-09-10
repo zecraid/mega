@@ -31,6 +31,7 @@ void WebServer::init(int logLevel, int logQueSize, const char *sqlLocal, uint16_
     printf("Database name: %s\n",dbName);
     printf("SQL connection pool num: %d\n", connPoolNum);
     printf("ThreadPool num: %d\n", std::thread::hardware_concurrency());
+    SQLConnectionPool::instance()->init(sqlLocal, sqlPort, sqlUser, sqlPwd, dbName, connPoolNum);
     printf("==========  INIT COMPLETE  ==========\n");
 }
 
@@ -43,14 +44,14 @@ void WebServer::start() {
     main_reactor_->loop();
 }
 
-ST WebServer::newConnection(int fd) {
+void WebServer::newConnection(int fd) {
     assert(fd != -1);
+    LOG_INFO("new client Add fd = %d, address:",conn->getFd(), conn->getAddr());
     uint16_t random = fd % sub_reactors_.size();
     std::unique_ptr<HttpConnection> conn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
     std::function<void(int)> cb = std::bind(&WebServer::closeConnection, this, std::placeholders::_1);
     conn->setCloseConnectionCallback(cb);
     connections_[fd] = std::move(conn);
-    LOG_INFO("new client Add fd = %d, address:",conn->getFd(), conn->getAddr());
 
     return ST_SUCCESS;
 }

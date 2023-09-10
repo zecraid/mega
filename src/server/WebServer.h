@@ -30,12 +30,8 @@ public:
               const char* dbName, int connPoolNum, const char *srcDir);
     void start();
 
-    ST newConnection(int fd);
+    void newConnection(int fd); // Acceptor回调函数
     ST closeConnection(int fd);
-
-//    void onConnect(std::function<void(Connection *)> fn);
-//    void onRecv(std::function<void(Connection *)> fn);
-//    void newConnect(std::function<void(int)> fn); // Acceptor回调函数
 
 public:
     static std::atomic<int> userCount;  // 用户数量，原子，支持锁
@@ -50,10 +46,6 @@ private:
     std::unordered_map<int, std::unique_ptr<HttpConnection>> connections_;
 
     std::unique_ptr<ThreadPool> thread_pool_;
-
-//    std::function<void(Connection *)> on_connect_;
-//    std::function<void(Connection *)> on_recv_;
-//    std::function<void(Connection *)> new_connect_;
 };
 
 #endif //!__WEBSERVER_H__
