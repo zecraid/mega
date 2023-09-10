@@ -29,11 +29,9 @@ HttpConnection::~HttpConnection() {
 
 ssize_t HttpConnection::read(int *saveErrno) {
     ssize_t len = -1;
-    int i = 1;
     do {
         len = read_buf_->readFd(getFd(), saveErrno);
-        LOG_INFO("第%d次读,len=%d",i, len);
-        i++;
+        LOG_INFO("读,len=%d", len);
         if (len <= 0) {
             break;
         }
@@ -95,8 +93,13 @@ bool HttpConnection::processRequest() {
 
 void HttpConnection::readRequest() {
     read_buf_->retrieveAll();
-    int saveErrno = -1; // TODO:读完写，写完读
-    HttpConnection::read(&saveErrno);
+    int ret = -1;
+    int readErrno = 0; // TODO:读完写，写完读
+    ret = read(&readErrno);
+    if(ret <=0 && readErrno != EAGAIN){
+        closeConnection();
+        return;
+    }
     channel_->setReadyEvents(Channel::WRITE_EVENT);
 }
 
@@ -117,6 +120,7 @@ void HttpConnection::setCloseConnectionCallback(const std::function<void(int)> &
 }
 
 void HttpConnection::closeConnection() {
+    LOG_INFO("client fd = %d close connection", socket_->getFd());
     close_connection_(socket_->getFd());
 }
 
