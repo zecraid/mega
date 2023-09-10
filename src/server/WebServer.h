@@ -31,7 +31,7 @@ public:
     void start();
 
     void newConnection(int fd); // Acceptor回调函数
-    ST closeConnection(int fd);
+    void closeConnection(int fd);
 
 public:
     static std::atomic<int> userCount;  // 用户数量，原子，支持锁
