@@ -53,10 +53,10 @@ void WebServer::newConnection(int fd) {
     conn->setCloseConnectionCallback(cb);
     connections_[fd] = std::move(conn);
     LOG_INFO("new client Add fd = %d, address:",conn->getFd(), conn->getAddr());
-    return ST_SUCCESS;
+//    return ST_SUCCESS;
 }
 
-ST WebServer::closeConnection(int fd) {
+void WebServer::closeConnection(int fd) {
     auto it = connections_.find(fd);
     assert(it != connections_.end());
     connections_.erase(fd);
