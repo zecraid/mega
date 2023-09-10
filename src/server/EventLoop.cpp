@@ -3,7 +3,7 @@
 #include "Channel.h"
 #include <vector>
 
-EventLoop::EventLoop(bool timer_on = true) {
+EventLoop::EventLoop(bool timer_on) {
     timer_on_ = timer_on;
     epoll_ = std::make_unique<Epoll>();
     if(timer_on_){
