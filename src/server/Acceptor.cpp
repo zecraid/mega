@@ -19,6 +19,7 @@ Acceptor::Acceptor(EventLoop *loop, const char *ip, uint16_t port) {
 ST Acceptor::acceptConnection() {
     int client_fd = -1;
     if(socket_->accept(client_fd) != ST_SUCCESS){
+        LOG_ERROR("创建ClientFD 失败")
         return ST_ACCEPTOR_ERROR;
     }
     LOG_INFO("新连接来咯：fd=%d",client_fd);
