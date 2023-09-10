@@ -1,7 +1,7 @@
 #ifndef __TCPSERVER_H__
 #define __TCPSERVER_H__
 
-#include "common.h"
+#include "State.h"
 #include "HttpConnection.h"
 #include "EventLoop.h"
 #include "Acceptor.h"
@@ -16,7 +16,7 @@
 class EventLoop;
 class Socket;
 class Acceptor;
-class Connection;
+class HttpConnection;
 class ThreadPool;
 class Logger;
 class HttpServer
@@ -32,21 +32,21 @@ public:
     ST newConnection(int fd);
     ST deleteConnection(int fd);
 
-    void onConnect(std::function<void(Connection *)> fn);
-    void onRecv(std::function<void(Connection *)> fn);
-    void newConnect(std::function<void(Connection *)> fn);
+    void onConnect(std::function<void(HttpConnection *)> fn);
+    void onRecv(std::function<void(HttpConnection *)> fn);
+    void newConnect(std::function<void(HttpConnection *)> fn);
 private:
     std::unique_ptr<EventLoop> main_reactor_;
     std::unique_ptr<Acceptor> acceptor_;
 
-    std::unordered_map<int, std::unique_ptr<Connection>> connections_;
+    std::unordered_map<int, std::unique_ptr<HttpConnection>> connections_;
     std::vector<std::unique_ptr<EventLoop>> sub_reactors_;
 
     std::unique_ptr<ThreadPool> thread_pool_;
 
-    std::function<void(Connection *)> on_connect_;
-    std::function<void(Connection *)> on_recv_;
-    std::function<void(Connection *)> new_connect_;
+    std::function<void(HttpConnection *)> on_connect_;
+    std::function<void(HttpConnection *)> on_recv_;
+    std::function<void(HttpConnection *)> new_connect_;
 };
 
 #endif //__TCPSERVER_H__

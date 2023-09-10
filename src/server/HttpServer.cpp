@@ -36,7 +36,7 @@ void HttpServer::init(Logger::Level logLevel, int logQueSize,
     HttpConnection::srcDir = srcDir;
 
     printf("========== SERVER INIT ==========\n");
-    Log::instance()->init(logLevel,"./log", ".log", logQueSize);
+    Log::Instance()->init(logLevel,"./log", ".log", logQueSize);
     printf("Log system: open\n");
     printf("Log level: %s\n",Logger::instance()->getLevelStr());
     printf("Log directory: %s\n","./log");
