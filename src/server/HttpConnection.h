@@ -33,6 +33,7 @@ public:
     void closeConnection();
 
     int getFd() const;
+    std::string getAddr() const;
     void readRequest();
     bool processRequest();
     void sendResponse();

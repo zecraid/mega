@@ -29,9 +29,12 @@ HttpConnection::~HttpConnection() {
 
 ssize_t HttpConnection::read(int *saveErrno) {
     ssize_t len = -1;
+    int i = 1;
     do {
         len = read_buf_->readFd(getFd(), saveErrno);
-        if (len <= 0) {
+        LOG_INFO("第%d次读,len=%d",i, len);
+        i++;
+        if (len <= 0) {,
             break;
         }
     } while (true); // ET:边沿触发要一次性全部读出
@@ -127,4 +130,8 @@ bool HttpConnection::isKeepAlive() {
 
 int HttpConnection::getFd() const {
     return socket_->getFd();
+}
+
+std::string HttpConnection::getAddr() const {
+    return socket_->getAddr();
 }

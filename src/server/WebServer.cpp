@@ -50,6 +50,7 @@ ST WebServer::newConnection(int fd) {
     std::function<void(int)> cb = std::bind(&WebServer::closeConnection, this, std::placeholders::_1);
     conn->setCloseConnectionCallback(cb);
     connections_[fd] = std::move(conn);
+    LOG_INFO("new client Add fd = %d, address:",conn->getFd(), conn->getAddr());
 
     return ST_SUCCESS;
 }
