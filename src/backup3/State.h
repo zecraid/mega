@@ -1,5 +1,5 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef __STATE_H__
+#define __STATE_H__
 
 enum ST {
     ST_UNDEFINED,
@@ -11,4 +11,4 @@ enum ST {
     ST_UNIMPLEMENTED
 };
 
-#endif //__COMMON_H__
+#endif //__STATE_H__

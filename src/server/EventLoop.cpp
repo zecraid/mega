@@ -1,27 +1,17 @@
 #include "EventLoop.h"
 #include "Epoll.h"
 #include "Channel.h"
+#include "../pool/ThreadPool.h"
 #include <vector>
+#include <thread>
 
-EventLoop::EventLoop(bool timer_on) {
-    timer_on_ = timer_on;
+EventLoop::EventLoop() {
     epoll_ = std::make_unique<Epoll>();
-    if(timer_on_){
-        timeoutMS_ = 60000; // 超时时间为60s
-        timer_ = std::make_unique<HeapTimer>();
-    }
 }
 
 void EventLoop::loop() {
-    int timeMS = -1; // epoll wait timeout == -1 无事件将阻塞
     while(true){
-        if(timer_on_){
-            if(timeoutMS_ > 0){
-                timeMS = timer_->getNextTick();
-            }
-        }
-
-        for(Channel *active_channel : epoll_->poll(timeMS)){
+        for(Channel *active_channel : epoll_->poll()){
             active_channel->handleEvent();
         }
     }

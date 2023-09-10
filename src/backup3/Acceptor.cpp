@@ -1,23 +1,19 @@
 #include "Acceptor.h"
-#include "Socket.h"
-#include "Channel.h"
 #include "../log/Log.h"
-#include <stdio.h>
-#include <cstring>
-#include "State.h"
 
-Acceptor::Acceptor(EventLoop *loop, const char* ip, uint16_t port) {
+Acceptor::Acceptor(EventLoop *loop, const char *ip, uint16_t port) {
     socket_ = std::make_unique<Socket>();
     assert(socket_->create() == ST_SUCCESS);
     assert(socket_->setReuseAddr() == ST_SUCCESS);
     assert(socket_->bind(ip,port) == ST_SUCCESS);
     assert(socket_->listen() == ST_SUCCESS);
-    
+    socket_->setNonBlocking(); // 默认使用ET模式，那么ListenFd和ClientFd都使用非阻塞
     channel_ = std::make_unique<Channel>(loop, socket_.get());
-
+    // 设置Listen Channel
     std::function<void()> cb = std::bind(&Acceptor::acceptConnection, this);
     channel_->setReadCallback(cb);
     channel_->enableRead();
+    channel_->enableET();
 }
 
 ST Acceptor::acceptConnection() {
@@ -26,14 +22,13 @@ ST Acceptor::acceptConnection() {
         return ST_ACCEPTOR_ERROR;
     }
     LOG_INFO("新连接来咯：fd=%d",client_fd);
-    socket_->setNonBlocking(); // 新接受到的连接设置为非阻塞式
+    socket_->setNonBlocking();
     if(new_connection_callback_){
         new_connection_callback_(client_fd); // WebServer::newConnection(int fd)
     }
     return ST_SUCCESS;
 }
 
-
-void Acceptor::setNewConnectionCallback(std::function<void(int)> const &callback){
+void Acceptor::setNewConnectionCallback(const std::function<void(int)> &callback) {
     new_connection_callback_ = std::move(callback);
 }

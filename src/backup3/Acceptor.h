@@ -21,6 +21,7 @@ private:
     std::unique_ptr<Socket> socket_;
     std::unique_ptr<Channel> channel_;
     std::function<void(int)> new_connection_callback_;
+
 };
 
 #endif //__ACCEPTOR_H__

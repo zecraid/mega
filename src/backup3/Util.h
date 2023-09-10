@@ -7,5 +7,4 @@ public:
     static void welcome();
 };
 
-
-#endif
+#endif //!__UTIL_H__

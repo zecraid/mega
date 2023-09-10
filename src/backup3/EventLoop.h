@@ -4,13 +4,14 @@
 #include <memory>
 #include "Channel.h"
 #include "Epoll.h"
+#include "../timer/HeapTimer.h"
 class Epoll;
 class Channel;
+class HeapTimer;
 class EventLoop
 {
-
 public:
-    EventLoop();
+    EventLoop(bool timer_on); //
     ~EventLoop() = default;
 
     void loop();
@@ -19,6 +20,9 @@ public:
 
 private:
     std::unique_ptr<Epoll> epoll_;
+    std::unique_ptr<HeapTimer> timer_;
+    bool timer_on_;
+    int timeoutMS_;
 };
 
 
