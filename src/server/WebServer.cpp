@@ -60,5 +60,5 @@ void WebServer::closeConnection(int fd) {
     auto it = connections_.find(fd);
     assert(it != connections_.end());
     connections_.erase(fd);
-    return ST_SUCCESS;
+//    return ST_SUCCESS;
 }
