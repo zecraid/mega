@@ -6,12 +6,13 @@ HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     socket_ = std::make_unique<Socket>(fd);
     if(loop != nullptr){
         channel_ = std::make_unique<Channel>(loop, socket_.get());
-        channel_->enableRead(); // TODO：设置回调函数
-        channel_->enableET();
         std::function<void()> read_cb = std::bind(&HttpConnection::readRequest, this);
         channel_->setReadCallback(read_cb);
         std::function<void()> write_cb = std::bind(&HttpConnection::sendResponse, this);
         channel_->setWriteCallback(write_cb);
+
+        channel_->enableRead(); // TODO：设置回调函数
+        channel_->enableET();
     }
     write_buf_ = std::make_unique<Buffer>();
     read_buf_ = std::make_unique<Buffer>();
