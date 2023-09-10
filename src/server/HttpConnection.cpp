@@ -67,6 +67,7 @@ ssize_t HttpConnection::write(int *saveErrno) {
 bool HttpConnection::processRequest() {
     request_->init();
     if(read_buf_->readableBytes() <= 0){
+        LOG_ERROR("read_buff EMPTY");
         return false;
     } else if(request_->parse(read_buf_.get())){
         LOG_DEBUG("Request Parse Success:%s %s", request_->method().c_str(),request_->path().c_str());
