@@ -2,6 +2,7 @@
 const char * HttpConnection::srcDir;
 
 HttpConnection::HttpConnection(int fd, EventLoop *loop) {
+    LOG_INFO("创建HttpConnection,fd = %d",socket_->getFd());
     socket_ = std::make_unique<Socket>(fd);
     if(loop != nullptr){
         channel_ = std::make_unique<Channel>(loop, socket_.get());
