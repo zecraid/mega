@@ -1,9 +1,10 @@
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
+
 #include "State.h"
 #include <string>
-class Socket
-{
+
+class Socket {
 public:
     Socket();
     Socket(int fd);
@@ -21,6 +22,7 @@ public:
     ST setNonBlocking(); // fd设置非阻塞
     bool isNonBlocking() const; // 判断fd是否为非阻塞
     ST setReuseAddr(); // 设置端口复用（TIME_WAIT期间也能占用端口）
+
 private:
     int fd_; // 每一个Socket都有一个文件描述符
 };

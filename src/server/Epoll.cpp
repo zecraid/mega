@@ -6,14 +6,14 @@
 
 #define MAX_EVENTS 1000
 
-Epoll::Epoll(){
+Epoll::Epoll() {
     epfd_ = epoll_create1(0);
     Util::errif(epfd_ == -1, "epoll create error");
     events_ = new epoll_event[MAX_EVENTS];
     bzero(events_, sizeof(*events_) * MAX_EVENTS);
 }
 
-Epoll::~Epoll(){
+Epoll::~Epoll() {
     if(epfd_ != -1){
         close(epfd_);
         epfd_ = -1;
@@ -21,13 +21,17 @@ Epoll::~Epoll(){
     delete [] events_;
 }
 
-std::vector<Channel*> Epoll::poll(int timeout) const{
+std::vector<Channel *> Epoll::poll(int timeout) const {
     std::vector<Channel*> active_channels;
-    int re_event_nums = epoll_wait(epfd_, events_, MAX_EVENTS, timeout);
-    Util::errif(re_event_nums == -1, "epoll wait error");
-    for(int i = 0; i < re_event_nums; ++i){
-        Channel *ch = (Channel *)events_[i].data.ptr;
+    int ready_event_nums = epoll_wait(epfd_, events_, MAX_EVENTS, timeout);
+    Util::errif(ready_event_nums == -1, "epoll wait error");
+    for(int i = 0; i < ready_event_nums; ++i){
+        Channel *ch = (Channel *)events_[i].data.ptr; // 将就绪事件的ptr强制转换为Channel类
         int events = events_[i].events;
+        // 根据Epoll标记为绑定Channel专属标记位
+        if(events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)){
+            ch->setReadyEvents(Channel::EXIT_EVENT);
+        }
         if (events & EPOLLIN) {
             ch->setReadyEvents(Channel::READ_EVENT);
         }
@@ -42,30 +46,32 @@ std::vector<Channel*> Epoll::poll(int timeout) const{
     return active_channels;
 }
 
-void Epoll::updateChannel(Channel *channel) const{
-    int sockfd = channel->getSocket()->getFd();
+void Epoll::updateChannel(Channel *ch) const {
+    int sockfd = ch->getSocket()->getFd();
     struct epoll_event ev {};
-    ev.data.ptr = channel;
-    if (channel->getListenEvents() & Channel::READ_EVENT) {
+    ev.data.ptr = ch;
+    if (ch->getListenEvents() & Channel::READ_EVENT) {
         ev.events |= EPOLLIN | EPOLLPRI;
     }
-    if (channel->getListenEvents() & Channel::WRITE_EVENT) {
+    if (ch->getListenEvents() & Channel::WRITE_EVENT) {
         ev.events |= EPOLLOUT;
     }
-    if (channel->getListenEvents() & Channel::ET) {
+    if (ch->getListenEvents() & Channel::ET) {
         ev.events |= EPOLLET;
     }
-    if (!channel->getExist()) {
+//    if(ch->getListenEvents() & Channel::EXIT_EVENT){
+//        ev.events |=
+//    }
+    if (!ch->getExist()) {
         Util::errif(epoll_ctl(epfd_, EPOLL_CTL_ADD, sockfd, &ev) == -1, "epoll add error");
-        channel->setExist();
+        ch->setExist();
     } else {
         Util::errif(epoll_ctl(epfd_, EPOLL_CTL_MOD, sockfd, &ev) == -1, "epoll modify error");
     }
 }
 
-void Epoll::deleteChannel(Channel *channel) const{
-    int sockfd = channel->getSocket()->getFd();
+void Epoll::deleteChannel(Channel *ch) const {
+    int sockfd = ch->getSocket()->getFd();
     Util::errif(epoll_ctl(epfd_, EPOLL_CTL_DEL, sockfd, nullptr) == -1, "epoll delete error");
-    channel->setExist(false);
+    ch->setExist(false);
 }
-
