@@ -1,5 +1,5 @@
-#ifndef __TCPSERVER_H__
-#define __TCPSERVER_H__
+#ifndef __WEBSERVER_H__
+#define __WEBSERVER_H__
 
 #include <functional>
 #include <unordered_map>
@@ -56,3 +56,5 @@ private:
     std::function<void(Connection *)> on_recv_;
     std::function<void(Connection *)> new_connect_;
 };
+
+#endif //__WEBSERVER_H__
