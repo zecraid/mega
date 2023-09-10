@@ -51,14 +51,14 @@ void WebServer::newConnection(int fd) {
     std::unique_ptr<HttpConnection> conn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
     std::function<void(int)> cb = std::bind(&WebServer::closeConnection, this, std::placeholders::_1);
     conn->setCloseConnectionCallback(cb);
-    connections_[fd] = std::move(conn);
+//    connections_[fd] = std::move(conn);
     LOG_INFO("new client Add fd = %d, address:",conn->getFd(), conn->getAddr());
 //    return ST_SUCCESS;
 }
 
 void WebServer::closeConnection(int fd) {
-    auto it = connections_.find(fd);
-    assert(it != connections_.end());
-    connections_.erase(fd);
+//    auto it = connections_.find(fd);
+//    assert(it != connections_.end());
+//    connections_.erase(fd);
 //    return ST_SUCCESS;
 }
