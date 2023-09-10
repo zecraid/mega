@@ -53,7 +53,7 @@ void WebServer::newConnection(int fd) {
 //    conn->setCloseConnectionCallback(cb);
 
 //    connections_[fd] = std::move(conn); // err
-    LOG_INFO("new client Add fd = %d, address:%s",conn->getFd(), conn->getAddr().c_str());
+    LOG_INFO("new client Add fd = %d",fd);
 //    return ST_SUCCESS;
 }
 
