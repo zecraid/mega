@@ -11,7 +11,7 @@ class HeapTimer;
 class EventLoop
 {
 public:
-    EventLoop(bool timer_on = true);
+    EventLoop(bool timer_on); //
     ~EventLoop() = default;
 
     void loop();
