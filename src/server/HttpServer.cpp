@@ -77,14 +77,14 @@ ST HttpServer::deleteConnection(int fd) {
     return ST_SUCCESS;
 }
 
-void HttpServer::onConnect(std::function<void(Connection *)> fn) {
+void HttpServer::onConnect(std::function<void(HttpConnection *)> fn) {
     on_connect_ = std::move(fn);
 }
 
-void HttpServer::onRecv(std::function<void(Connection *)> fn) {
+void HttpServer::onRecv(std::function<void(HttpConnection *)> fn) {
     on_recv_ = std::move(fn);
 }
 
-void HttpServer::newConnect(std::function<void(Connection *)> fn) {
+void HttpServer::newConnect(std::function<void(HttpConnection *)> fn) {
     new_connect_ = std::move(fn);
 }
