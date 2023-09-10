@@ -99,6 +99,7 @@ void HttpConnection::readRequest() {
     int readErrno = 0; // TODO:读完写，写完读
     ret = read(&readErrno);
     if(ret <=0 && readErrno != EAGAIN){
+        LOG_INFO("关闭连接fd = %d",socket_->getFd());
         closeConnection();
         return;
     }
