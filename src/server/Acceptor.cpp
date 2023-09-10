@@ -16,7 +16,7 @@ Acceptor::Acceptor(EventLoop *loop, const char *ip, uint16_t port) {
     channel_->enableET();
 }
 
-void Acceptor::acceptConnection() {
+ST Acceptor::acceptConnection() {
     int client_fd = -1;
     if(socket_->accept(client_fd) != ST_SUCCESS){
         return ST_ACCEPTOR_ERROR;

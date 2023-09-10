@@ -14,7 +14,7 @@ class Acceptor
 public:
     Acceptor(EventLoop *loop, const char* ip, uint16_t port);
     ~Acceptor() = default;
-    void acceptConnection();
+    ST acceptConnection();
     void setNewConnectionCallback(std::function<void(int)> const &callback);
 
 private:
