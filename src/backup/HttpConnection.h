@@ -9,10 +9,10 @@
 #include "../buffer/Buffer.h"
 #include "../http/HttpRequest.h"
 #include "../http/HttpResponse.h"
-#include "../server/EventLoop.h"
-#include "../server/State.h"
-#include "../server/Socket.h"
-#include "../server/Channel.h"
+#include "EventLoop.h"
+#include "State.h"
+#include "Socket.h"
+#include "Channel.h"
 
 class EventLoop;
 class Socket;

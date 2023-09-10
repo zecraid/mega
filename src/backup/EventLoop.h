@@ -4,26 +4,20 @@
 #include <memory>
 #include "Channel.h"
 #include "Epoll.h"
-#include "../timer/HeapTimer.h"
 class Epoll;
 class Channel;
-class HeapTimer;
 class EventLoop
 {
 public:
-    EventLoop(bool timer_on = true);
+    EventLoop();
     ~EventLoop() = default;
 
-    void loop();
-    void updateChannel(Channel *ch);
-    void deleteChannel(Channel *ch);
+    void loop(); // 进入无限遍历epoll_wait返回的active_channel
+    void updateChannel(Channel *ch); // 更新Channel（挂载红黑树）
+    void deleteChannel(Channel *ch); // 删除Channel（从红黑树上删除）
 
 private:
     std::unique_ptr<Epoll> epoll_;
-    std::unique_ptr<HeapTimer> timer_;
-    bool timer_on_;
-    int timeoutMS_;
 };
-
 
 #endif

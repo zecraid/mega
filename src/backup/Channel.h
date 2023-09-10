@@ -2,11 +2,12 @@
 #define __CHANNEL_H__
 #include <sys/epoll.h>
 #include <functional>
+#include <unistd.h>
 #include "EventLoop.h"
 #include "Socket.h"
-class Socket;
 class EventLoop;
-class Channel{
+class Socket;
+class Channel {
 public:
     Channel(EventLoop *loop, Socket *socket);
     ~Channel();
@@ -14,7 +15,6 @@ public:
     void handleEvent(); // 位与读写标记，执行读写回调函数
     void enableRead(); // 标记读，标记完会同步到红黑树上
     void enableWrite(); // 标记写，标记完会同步到红黑树上
-    void enableExit(); // 标记退出，标记完会同步到红黑树上
     void enableET(); // 标记边沿出发，标记完会同步到红黑树上
 
     Socket* getSocket(); // 获取Socket
@@ -26,13 +26,11 @@ public:
     void setReadyEvents(int event);
     void setReadCallback(std::function<void()> const &callback);
     void setWriteCallback(std::function<void()> const &callback);
-    void setExitCallback(std::function<void()> const &callback);
 
 public:
     // Channel专属【二进制】标记，直接判断三大事件类型，这里不再使用EPOLL标记了
     static const int READ_EVENT; // 标记有读事件
     static const int WRITE_EVENT; // 标记有写事件
-    static const int EXIT_EVENT; // 标记退出事件
     static const int ET; // 标记边沿触发
 
 private:
@@ -41,9 +39,10 @@ private:
     int listen_events_{0}; // 监听事件
     int ready_events_{0}; // 就绪事件
     bool exist_{false}; // 存在标记位
-    std::function<void()> read_callback_;
-    std::function<void()> write_callback_;
-    std::function<void()> exit_callback_;
+    std::function<void()> read_callback_; // 读回调
+    std::function<void()> write_callback_; // 写回调
+
+
 };
 
-#endif
+#endif //!__CHANNEL_H__

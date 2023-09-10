@@ -9,9 +9,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "../server/State.h"
-#include "../server/EventLoop.h"
-#include "../server/Acceptor.h"
+#include "State.h"
+#include "EventLoop.h"
+#include "Acceptor.h"
 #include "HttpConnection.h"
 #include "../pool/ThreadPool.h"
 #include "../timer/HeapTimer.h"

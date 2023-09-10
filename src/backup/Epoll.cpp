@@ -29,9 +29,6 @@ std::vector<Channel *> Epoll::poll(int timeout) const {
         Channel *ch = (Channel *)events_[i].data.ptr; // 将就绪事件的ptr强制转换为Channel类
         int events = events_[i].events;
         // 根据Epoll标记为绑定Channel专属标记位
-        if(events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)){
-            ch->setReadyEvents(Channel::EXIT_EVENT);
-        }
         if (events & EPOLLIN) {
             ch->setReadyEvents(Channel::READ_EVENT);
         }
@@ -59,9 +56,6 @@ void Epoll::updateChannel(Channel *ch) const {
     if (ch->getListenEvents() & Channel::ET) {
         ev.events |= EPOLLET;
     }
-//    if(ch->getListenEvents() & Channel::EXIT_EVENT){
-//        ev.events |=
-//    }
     if (!ch->getExist()) {
         Util::errif(epoll_ctl(epfd_, EPOLL_CTL_ADD, sockfd, &ev) == -1, "epoll add error");
         ch->setExist();

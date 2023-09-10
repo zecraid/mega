@@ -1,7 +1,7 @@
 #include "WebServer.h"
 #include "../log/Log.h"
 #include "../pool/SqlConnectionPool.h"
-#include "../server/Util.h"
+#include "Util.h"
 
 WebServer::WebServer(const char *ip, uint16_t port) {
     Util::welcome();
