@@ -57,4 +57,4 @@ private:
     std::function<void(Connection *)> new_connect_;
 };
 
-#endif //__WEBSERVER_H__
+#endif //!__WEBSERVER_H__

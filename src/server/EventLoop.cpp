@@ -4,7 +4,7 @@
 #include <vector>
 
 EventLoop::EventLoop(bool timer_on = true) {
-    timer_on_ = true;
+    timer_on_ = timer_on;
     epoll_ = std::make_unique<Epoll>();
     if(timer_on_){
         timeoutMS_ = 60000; // 超时时间为60s
