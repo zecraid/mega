@@ -57,7 +57,7 @@ ST HttpServer::newConnection(int fd) {
     assert(fd != -1);
     uint64_t random = fd % sub_reactors_.size();
 
-    std::unique_ptr<Connection> conn = std::make_unique<Connection>(fd, sub_reactors_[random].get());
+    std::unique_ptr<HttpConnection> conn = std::make_unique<HttpConnection>(fd, sub_reactors_[random].get());
     std::function<void(int)> cb = std::bind(&HttpServer::deleteConnection, this, std::placeholders::_1);
 
     conn->setDeleteConnection(cb);
