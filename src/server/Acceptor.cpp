@@ -16,18 +16,17 @@ Acceptor::Acceptor(EventLoop *loop, const char *ip, uint16_t port) {
     channel_->enableET();
 }
 
-ST Acceptor::acceptConnection() {
+void Acceptor::acceptConnection() {
     int client_fd = -1;
     if(socket_->accept(client_fd) != ST_SUCCESS){
         LOG_ERROR("创建ClientFD 失败")
-        return ST_ACCEPTOR_ERROR;
+        return;
     }
     LOG_INFO("新连接来咯：fd=%d",client_fd);
     socket_->setNonBlocking();
     if(new_connection_callback_){
         new_connection_callback_(client_fd); // WebServer::newConnection(int fd)
     }
-    return ST_SUCCESS;
 }
 
 void Acceptor::setNewConnectionCallback(const std::function<void(int)> &callback) {
