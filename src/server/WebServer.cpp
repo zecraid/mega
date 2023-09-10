@@ -10,7 +10,7 @@ WebServer::WebServer(const char *ip, uint16_t port) {
     unsigned int size = std::thread::hardware_concurrency();
     thread_pool_ = std::make_unique<ThreadPool>(size);
 
-    for(size i = 0; i < size; i++){
+    for(size_t i = 0; i < size; i++){
         std::unique_ptr<EventLoop> sub = std::make_unique<EventLoop>(true);
         sub_reactors_.push_back(std::move(sub));
     }

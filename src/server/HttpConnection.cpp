@@ -7,8 +7,10 @@ HttpConnection::HttpConnection(int fd, EventLoop *loop) {
         channel_ = std::make_unique<Channel>(loop, socket_.get());
         channel_->enableRead(); // TODO：设置回调函数
         channel_->enableET();
-        channel_->setReadCallback(readRequest);
-        channel_->setWriteCallback(sendResponse);
+        std::function<void()> read_cb = std::bind(&HttpConnection::readRequest, this);
+        channel_->setReadCallback(read_cb);
+        std::function<void()> write_cb = std::bind(&HttpConnection::sendResponse, this);
+        channel_->setWriteCallback(write_cb);
     }
     write_buf_ = std::make_unique<Buffer>();
     read_buf_ = std::make_unique<Buffer>();
@@ -16,7 +18,7 @@ HttpConnection::HttpConnection(int fd, EventLoop *loop) {
     read_buf_->retrieveAll();
 
     request_ = std::make_unique<HttpRequest>();
-    response_ = std::make_unique<HttpConnection>();
+    response_ = std::make_unique<HttpResponse>();
     state_ = ConnState::CONNECTED;
 }
 
@@ -28,7 +30,7 @@ HttpConnection::~HttpConnection() {
 ssize_t HttpConnection::read(int *saveErrno) {
     ssize_t len = -1;
     do {
-        len = read_buf_->readFd(fd_, saveErrno);
+        len = read_buf_->readFd(getFd(), saveErrno);
         if (len <= 0) {
             break;
         }
@@ -39,7 +41,7 @@ ssize_t HttpConnection::read(int *saveErrno) {
 ssize_t HttpConnection::write(int *saveErrno) {
     ssize_t len = -1;
     do {
-        len = writev(fd_, iov_, iovCnt_);   // 将iov的内容写到fd中
+        len = writev(getFd(), iov_, iovCnt_);   // 将iov的内容写到fd中
         if(len <= 0) {
             *saveErrno = errno;
             break;

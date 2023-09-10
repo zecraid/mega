@@ -8,7 +8,7 @@ EventLoop::EventLoop(bool timer_on = true) {
     epoll_ = std::make_unique<Epoll>();
     if(timer_on_){
         timeoutMS_ = 60000; // 超时时间为60s
-        timer_on_ = std::make_unique<HeapTimer>();
+        timer_ = std::make_unique<HeapTimer>();
     }
 }
 
