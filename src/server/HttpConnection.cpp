@@ -69,7 +69,7 @@ bool HttpConnection::processRequest() {
     if(read_buf_->readableBytes() <= 0){
         return false;
     } else if(request_->parse(read_buf_.get())){
-        LOG_DEBUG("Request Parse Success:%s", request_->path().c_str());
+        LOG_DEBUG("Request Parse Success:%s %s", request_->method().c_str(),request_->path().c_str());
         response_->init(srcDir, request_->path(), request_->isKeepAlive(), 200);
     } else {
         response_->init(srcDir, request_->path(), false, 400);
