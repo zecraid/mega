@@ -7,6 +7,7 @@
 #include <stdlib.h>      // atoi()
 #include <errno.h>
 #include <cassert>
+#include <memory>
 #include "../log/Log.h"
 #include "../buffer/Buffer.h"
 #include "../http/HttpRequest.h"
@@ -51,11 +52,11 @@ private:
     int iovCnt_;
     struct iovec iov_[2];
 
-    Buffer readBuff_; // 读缓冲区
-    Buffer writeBuff_; // 写缓冲区
+    std::unique_ptr<Buffer> read_buff_;
+    std::unique_ptr<Buffer> write_buff_;
 
-    HttpRequest request_;
-    HttpResponse response_;
+    std::unique_ptr<HttpRequest> request_;
+    std::unique_ptr<HttpResponse> response_;
 };
 
 #endif //!__HTTPCONNECTION_H__
