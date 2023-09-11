@@ -5,9 +5,10 @@
 #include <thread>
 #include <sys/time.h>
 #include <string.h>
-#include <stdarg.h>           // vastart va_end
+#include <stdarg.h>
 #include <assert.h>
-#include <sys/stat.h>         // mkdir
+#include <sys/stat.h>
+#include <memory>
 #include "BlockQueue.h"
 #include "../buffer/Buffer.h"
 class Buffer;
@@ -47,8 +48,7 @@ private:
     int toDay_;                 //按当天日期区分文件
 
     bool isOpen_;
-
-    Buffer buff_;       // 输出的内容，缓冲区
+    std::unique_ptr<Buffer> buff_; // 输出的内容，缓冲区
     int level_;         // 日志等级
     bool isAsync_;      // 是否开启异步日志
 
@@ -72,6 +72,5 @@ private:
 #define LOG_INFO(format, ...) do {LOG_BASE(1, format, ##__VA_ARGS__)} while(0);
 #define LOG_WARN(format, ...) do {LOG_BASE(2, format, ##__VA_ARGS__)} while(0);
 #define LOG_ERROR(format, ...) do {LOG_BASE(3, format, ##__VA_ARGS__)} while(0);
-
 
 #endif //!__LOG_H__

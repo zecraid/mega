@@ -84,7 +84,7 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
 
     {
         std::lock_guard<std::mutex> locker(mtx_);
-        buff_.retrieveAll();
+        buff_->retrieveAll();
         if(fp_){ // 重新打开
             flush();
             fclose(fp_);
@@ -153,31 +153,31 @@ void Log::write(int level, const char * file, int line, const char *format, ...)
         std::unique_lock<std::mutex> locker(mtx_);
         lineCount_ ++;
 
-        int n = snprintf(buff_.beginWritePtr(), 128, "%d-%02d-%02d %02d:%02d:%02d.%06ld ",
+        int n = snprintf(buff_->beginWritePtr(), 128, "%d-%02d-%02d %02d:%02d:%02d.%06ld ",
                          t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
                          t.tm_hour, t.tm_min, t.tm_sec, now.tv_usec);
-        buff_.moveWritePos(n);
+        buff_->moveWritePos(n);
 
         appendLogLevelTitle_(level);
 
-        int j = snprintf(buff_.beginWritePtr(), 128, "[%s:%d]", file, line);
-        buff_.moveWritePos(j);
+        int j = snprintf(buff_->beginWritePtr(), 128, "[%s:%d]", file, line);
+        buff_->moveWritePos(j);
 
         va_start(vaList, format);
-        int m = vsnprintf(buff_.beginWritePtr(), buff_.writableBytes(), format, vaList);
+        int m = vsnprintf(buff_->beginWritePtr(), buff_->writableBytes(), format, vaList);
         va_end(vaList);
 
-        buff_.moveWritePos(m);
-        buff_.append("\n\0", 2);
+        buff_->moveWritePos(m);
+        buff_->append("\n\0", 2);
 
         if(isAsync_ && deque_ && !deque_->full()){ // 异步方式（加入阻塞队列中，等待写线程读取日志信息）
-            deque_->push_back(buff_.retrieveAllToStr());
+            deque_->push_back(buff_->retrieveAllToStr());
         } else { // 同步方式
-            std::string log_line(buff_.peek(), buff_.readableBytes());
+            std::string log_line(buff_->peek(), buff_->readableBytes());
             printf("%s",log_line.c_str());
-            fputs(buff_.peek(), fp_); // 同步就直接写入文件
+            fputs(buff_->peek(), fp_); // 同步就直接写入文件
         }
-        buff_.retrieveAll();
+        buff_->retrieveAll();
     }
 }
 
