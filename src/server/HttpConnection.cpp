@@ -9,7 +9,7 @@ HttpConnection::HttpConnection() {
     isClose_ = true;
 }
 
-HttpConnection::HttpConnection() {
+HttpConnection::~HttpConnection() {
     close();
 }
 
