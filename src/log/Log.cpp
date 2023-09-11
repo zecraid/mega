@@ -89,24 +89,27 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
             flush();
             fclose(fp_);
         }
-        fp_ = fopen(fileName, "a"); //打开文件读取并Append写入
+        fp_ = fopen(fileName, "r"); //打开文件读取并Append写入
         if (fp_ == nullptr) {
             mkdir(path_, 0777);
-            fp_ = fopen(fileName, "a");
+            fp_ = fopen(fileName, "r");
         }
-        assert(fp_ != nullptr);
-    }
-    // 计算文件行数
-    char ch;
-    while ((ch = fgetc(fp_)) != EOF) {
-        if (ch == '\n') {
+        // 计算文件行数
+        char ch;
+        while ((ch = fgetc(fp_)) != EOF) {
+            if (ch == '\n') {
+                lineCount_++;
+            }
+        }
+        if (ch != '\n' && lineCount_ > 0) {
             lineCount_++;
         }
+        LOG_INFO("当前linecount=%d",lineCount_);
+        fclose(fp_);
+        fp_ = fopen(fileName,"a");
+        assert(fp_ != nullptr);
     }
-    if (ch != '\n' && lineCount_ > 0) {
-        lineCount_++;
-    }
-    LOG_INFO("当前linecount=%d",lineCount_);
+
 }
 
 void Log::write(int level, const char * file, int line, const char *format, ...) {
