@@ -36,7 +36,7 @@ public:
     }
 
     bool isKeepAlive() const {
-        return request_.IsKeepAlive();
+        return request_->isKeepAlive();
     }
 public:
     static bool isET;
