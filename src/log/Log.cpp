@@ -104,12 +104,11 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
         if (ch != '\n' && lineCount_ > 0) {
             lineCount_++;
         }
-        LOG_INFO("当前linecount=%d",lineCount_);
+        printf("当前linecount=%d",lineCount_);
         fclose(fp_);
         fp_ = fopen(fileName,"a");
         assert(fp_ != nullptr);
     }
-
 }
 
 void Log::write(int level, const char * file, int line, const char *format, ...) {
