@@ -50,6 +50,10 @@ int HttpConnection::getPort() const {
     return addr_.sin_port;
 }
 
+const char *HttpConnection::getIP() const {
+    return inet_ntoa(addr_.sin_addr);
+}
+
 ssize_t HttpConnection::read(int* saveErrno) {
     ssize_t len = -1;
     do {
