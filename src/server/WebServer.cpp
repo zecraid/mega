@@ -98,7 +98,7 @@ void WebServer::sendError_(int fd, const char *info) {
 
 void WebServer::closeConn_(HttpConnection *client) {
     assert(client);
-    LOG_INFO("Client[%d] quit!", client->());
+    LOG_INFO("Client[%d] quit!", client->getFd());
     epoller_->delFd(client->getFd());
     client->close();
 }
@@ -107,7 +107,7 @@ void WebServer::addClient_(int fd, sockaddr_in addr) {
     assert(fd > 0);
     users_[fd].init(fd, addr);
     if(timeoutMS_ > 0) {
-        timer_->add(fd, timeoutMS_, std::bind(&WebServer::CloseConn_, this, &users_[fd]));
+        timer_->add(fd, timeoutMS_, std::bind(&WebServer::closeConn_, this, &users_[fd]));
     }
     epoller_->addFd(fd, EPOLLIN | connEvent_);
     setFdNonblock(fd);
