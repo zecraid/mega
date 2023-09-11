@@ -98,7 +98,7 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
     }
     // 计算文件行数
     char ch;
-    while ((ch = fgetc(file)) != EOF) {
+    while ((ch = fgetc(fp_)) != EOF) {
         if (ch == '\n') {
             lineCount++;
         }
