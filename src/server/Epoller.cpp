@@ -12,6 +12,7 @@ Epoller::~Epoller() {
 
 bool Epoller::addFd(int fd, uint32_t events) {
     if(fd < 0) return false;
+    epoll_event ev = {0};
     ev.data.fd = fd;
     ev.events = events;
     return 0 == epoll_ctl(epfd_, EPOLL_CTL_ADD, fd, &ev);
@@ -32,7 +33,7 @@ bool Epoller::delFd(int fd) {
 
 // 返回就绪事件数量
 int Epoller::wait(int timeoutMs) {
-    return epoll_wait(epollFd_, &events_[0], static_cast<int>(events_.size()), timeoutMs);
+    return epoll_wait(epfd_, &events_[0], static_cast<int>(events_.size()), timeoutMs);
 }
 
 // 获取事件文件描述符
