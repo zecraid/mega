@@ -96,6 +96,16 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
         }
         assert(fp_ != nullptr);
     }
+    // 计算文件行数
+    char ch;
+    while ((ch = fgetc(file)) != EOF) {
+        if (ch == '\n') {
+            lineCount++;
+        }
+    }
+    if (ch != '\n' && lineCount > 0) {
+        lineCount++;
+    }
 }
 
 void Log::write(int level, const char * file, int line, const char *format, ...) {
