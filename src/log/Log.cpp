@@ -95,16 +95,19 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
             fp_ = fopen(fileName, "r");
         }
         // 计算文件行数
-        char ch;
-        while ((ch = fgetc(fp_)) != EOF) {
-            if (ch == '\n') {
+        if(fp_ != nullptr){
+            char ch;
+            while ((ch = fgetc(fp_)) != EOF) {
+                if (ch == '\n') {
+                    lineCount_++;
+                }
+            }
+            if (ch != '\n' && lineCount_ > 0) {
                 lineCount_++;
             }
+        } else {
+            lineCount_ = 0;
         }
-        if (ch != '\n' && lineCount_ > 0) {
-            lineCount_++;
-        }
-        printf("当前linecount=%d",lineCount_);
         fclose(fp_);
         fp_ = fopen(fileName,"a");
         assert(fp_ != nullptr);
