@@ -11,13 +11,13 @@ public:
     explicit Epoller(int maxEvent = 1024);
     ~Epoller();
 
-    bool AddFd(int fd, uint32_t events);
-    bool ModFd(int fd, uint32_t events);
-    bool DelFd(int fd);
+    bool addFd(int fd, uint32_t events);
+    bool modFd(int fd, uint32_t events);
+    bool delFd(int fd);
 
-    int Wait(int timeoutMs = -1);
-    int GetEventFd(size_t i) const;
-    uint32_t GetEvents(size_t i) const;
+    int wait(int timeoutMs = -1);
+    int getEventFd(size_t i) const;
+    uint32_t getEvents(size_t i) const;
 
 private:
     int epfd_;
