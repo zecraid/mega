@@ -105,10 +105,10 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
             if (ch != '\n' && lineCount_ > 0) {
                 lineCount_++;
             }
+            fclose(fp_);
         } else {
             lineCount_ = 0;
         }
-        fclose(fp_);
         fp_ = fopen(fileName,"a");
         assert(fp_ != nullptr);
     }
