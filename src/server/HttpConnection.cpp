@@ -14,7 +14,7 @@ HttpConnection::~HttpConnection() {
 }
 
 void HttpConnection::init(int sockFd, const sockaddr_in &addr) {
-    assert(fd_ > 0);
+    assert(sockFd > 0);
     userCount++;
     addr_ = addr;
     fd_ = sockFd;
