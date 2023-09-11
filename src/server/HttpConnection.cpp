@@ -1,7 +1,7 @@
 #include "HttpConnection.h"
-const char* HttpConn::srcDir;
-std::atomic<int> HttpConn::userCount;
-bool HttpConn::isET;
+const char* HttpConnection::srcDir;
+std::atomic<int> HttpConnection::userCount;
+bool HttpConnection::isET;
 
 HttpConnection::HttpConnection() {
     fd_ = -1;

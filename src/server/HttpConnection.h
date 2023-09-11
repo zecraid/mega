@@ -6,6 +6,7 @@
 #include <arpa/inet.h>   // sockaddr_in
 #include <stdlib.h>      // atoi()
 #include <errno.h>
+#include <cassert>
 #include "../log/Log.h"
 #include "../buffer/Buffer.h"
 #include "../http/HttpRequest.h"
@@ -13,7 +14,6 @@
 class Buffer;
 class HttpRequest;
 class HttpResponse;
-
 class HttpConnection {
 public:
     HttpConnection();
@@ -57,4 +57,5 @@ private:
     HttpRequest request_;
     HttpResponse response_;
 };
+
 #endif //!__HTTPCONNECTION_H__
