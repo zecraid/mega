@@ -106,6 +106,7 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
     if (ch != '\n' && lineCount_ > 0) {
         lineCount_++;
     }
+    LOG_INFO("当前linecount=%d",lineCount_);
 }
 
 void Log::write(int level, const char * file, int line, const char *format, ...) {
@@ -117,7 +118,7 @@ void Log::write(int level, const char * file, int line, const char *format, ...)
     va_list vaList;
 
     // 日志日期  日志行数  如果不是今天或者行数超了
-    if(toDay_ != t.tm_mday || (lineCount_ && (lineCount_ % MAX_LINES == 0))){
+    if(toDay_ != t.tm_mday || (lineCount_ && (lineCount_ >= MAX_LINES))){
         std::unique_lock<std::mutex> locker(mtx_);
         locker.unlock();
 
@@ -132,6 +133,7 @@ void Log::write(int level, const char * file, int line, const char *format, ...)
             lineCount_ = 0;
         }else{ // 行数超过了,newFile = ./log/2023_07_27-1.log
             snprintf(newFile, LOG_NAME_LEN - 72, "%s/%s-%d%s", path_, tail, (lineCount_  / MAX_LINES), suffix_);
+            lineCount_ = 0;
         }
 
         locker.lock();

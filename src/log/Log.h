@@ -43,8 +43,6 @@ private:
     const char* path_;          //路径名
     const char* suffix_;        //后缀名
 
-    int MAX_LINES_;             // 最大日志行数
-
     int lineCount_;             //日志行数记录
     int toDay_;                 //按当天日期区分文件
 
