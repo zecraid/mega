@@ -100,11 +100,11 @@ void Log::init(int level, const char *path, const char *suffix, int maxQueueCapa
     char ch;
     while ((ch = fgetc(fp_)) != EOF) {
         if (ch == '\n') {
-            lineCount++;
+            lineCount_++;
         }
     }
-    if (ch != '\n' && lineCount > 0) {
-        lineCount++;
+    if (ch != '\n' && lineCount_ > 0) {
+        lineCount_++;
     }
 }
 
