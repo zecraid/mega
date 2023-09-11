@@ -17,13 +17,13 @@ void HttpConnection::init(int sockFd, const sockaddr_in &addr) {
     assert(fd_ > 0);
     userCount++;
     addr_ = addr;
-    fd_ = fd;
+    fd_ = sockFd;
     response_ = std::make_unique<HttpResponse>();
     request_ = std::make_unique<HttpRequest>();
     read_buff_ = std::make_unique<Buffer>();
     write_buff_ = std::make_unique<Buffer>();
     read_buff_->retrieveAll();
-    write_buff_->retrieveAll()
+    write_buff_->retrieveAll();
     isClose_ = false;
     LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, getIP(), getPort(), (int)userCount);
 }
@@ -93,14 +93,14 @@ bool HttpConnection::process() {
     if(read_buff_->readableBytes() <= 0) {
         return false;
     }
-    else if(request_.parse(read_buff_.get())) {    // 解析成功
+    else if(request_->parse(read_buff_.get())) {    // 解析成功
         LOG_DEBUG("%s", request_->path().c_str());
         response_->init(srcDir, request_->path(), request_->isKeepAlive(), 200);
     } else {
         response_->init(srcDir, request_->path(), false, 400);
     }
 
-    response_->makeResponse(writeBuff_); // 生成响应报文放入writeBuff_中
+    response_->makeResponse(write_buff_.get()); // 生成响应报文放入writeBuff_中
     // 响应头
     iov_[0].iov_base = const_cast<char*>(write_buff_->peek());
     iov_[0].iov_len = write_buff_->readableBytes();
