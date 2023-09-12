@@ -114,12 +114,10 @@ void WebServer::addClient_(int fd) {
 }
 
 void WebServer::dealListen_() {
-    struct sockaddr_in addr;
-    socklen_t len = sizeof(addr);
     do {
-        int fd = accept(listenFd_, (struct sockaddr *)&addr, &len);
+        int fd = accept(listenFd_, nullptr, nullptr); // TODO:set nullptr ,timer 失效？
         if(fd <= 0) { return;}
-        else if(HttpConnection::userCount >= MAX_FD) {
+        else if(HttpConnection::userCount >= MAX_FD) { // 用户数大于MAX_FD
             sendError_(fd, "Server busy!");
             LOG_WARN("Clients is full!");
             return;
