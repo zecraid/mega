@@ -8,6 +8,7 @@ Log::Log() {
     lineCount_ = 0;
     toDay_ = 0;
     isAsync_ = false;
+    buff_ = std::make_unique<Buffer>();
 }
 
 Log::~Log() {
