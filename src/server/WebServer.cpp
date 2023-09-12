@@ -8,7 +8,6 @@ WebServer::WebServer(const char *ip, uint16_t port) {
     timer_ = std::make_unique<HeapTimer>();
     threadpool_ = std::make_unique<ThreadPool>(std::thread::hardware_concurrency());
     epoller_ = std::make_unique<Epoller>();
-    listen_socket_ = std::make_unique<Socket>();
 }
 
 void WebServer::init(int logLevel, int logQueSize, const char *sqlLocal, uint16_t sqlPort, const char *sqlUser,
