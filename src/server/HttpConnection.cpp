@@ -98,13 +98,11 @@ bool HttpConnection::process() {
         return false;
     }
     else if(request_->parse(read_buff_.get())) {    // 解析成功
-        LOG_DEBUG("%s", request_->path().c_str());
         response_->init(srcDir, request_->path(), request_->isKeepAlive(), 200);
     } else {
         response_->init(srcDir, request_->path(), false, 400);
     }
-
-    response_->makeResponse(write_buff_.get()); // 生成响应报文放入writeBuff_中
+    response_->makeResponse(write_buff_.get()); // 生成响应报文放入write_buff_中
     // 响应头
     iov_[0].iov_base = const_cast<char*>(write_buff_->peek());
     iov_[0].iov_len = write_buff_->readableBytes();
@@ -116,7 +114,6 @@ bool HttpConnection::process() {
         iov_[1].iov_len = response_->fileLen();
         iovCnt_ = 2;
     }
-    LOG_DEBUG("filesize:%d, %d  to %d", response_->fileLen() , iovCnt_, writeBytesLength());
     return true;
 }
 
