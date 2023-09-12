@@ -29,7 +29,7 @@ WebServer::~WebServer() {
 }
 
 void WebServer::initEventMode_(int trigMode) {
-    listenEvent_ = EPOLLRDHUP;
+    listenFd_ = EPOLLRDHUP;
     clientEvent_ = EPOLLONESHOT | EPOLLRDHUP;
     switch (trigMode)
     {
