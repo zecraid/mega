@@ -30,7 +30,7 @@ WebServer::~WebServer() {
 }
 
 void WebServer::initEventMode_(int trigMode) {
-    listenFd_ = EPOLLRDHUP;
+    listenEvent_ = EPOLLRDHUP;
     connEvent_ = EPOLLONESHOT | EPOLLRDHUP;
     switch (trigMode)
     {
@@ -56,7 +56,7 @@ void WebServer::initEventMode_(int trigMode) {
 
 void WebServer::start() {
     int timeMS = -1;  /* epoll wait timeout == -1 无事件将阻塞 */
-    if(!isClose_) { LOG_INFO("========== Server start =========="); }
+    if(!isClose_) { LOG_INFO("Server Start SUCCESS"); }
     while (!isClose_){
         if(timeoutMS_ > 0) {
             timeMS = timer_->getNextTick();
@@ -208,8 +208,7 @@ bool WebServer::initSocket_() {
     }
 
     int optval = 1;
-    /* 端口复用 */
-    /* 只有最后一个套接字会正常接收数据。 */
+
     ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
     if(ret == -1) {
         LOG_ERROR("set socket setsockopt error !");
