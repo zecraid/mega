@@ -32,7 +32,7 @@ public:
 private:
     bool initSocket_(); // 创建ListenFd，挂载红黑树，设置非阻塞
     void initEventMode_(int trigMode); // 初始化listenEvent和connEvent
-    void addClient_(int fd, sockaddr_in addr); // 将新连接添加集合中
+    void addClient_(int fd); // 将新连接添加集合中
 
     void dealListen_(); // 处理ListenFd发生的事件（创建ClientFd）
     void dealWrite_(HttpConnection* client); // 处理写

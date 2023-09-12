@@ -102,9 +102,9 @@ void WebServer::closeConn_(HttpConnection *client) {
     client->close();
 }
 
-void WebServer::addClient_(int fd, sockaddr_in addr) {
+void WebServer::addClient_(int fd) {
     assert(fd > 0);
-    users_[fd].init(fd, addr);
+    users_[fd].init(fd);
     if(timeoutMS_ > 0) {
         timer_->add(fd, timeoutMS_, std::bind(&WebServer::closeConn_, this, &users_[fd]));
     }
@@ -124,7 +124,7 @@ void WebServer::dealListen_() {
             LOG_WARN("Clients is full!");
             return;
         }
-        addClient_(fd, addr);
+        addClient_(fd);
     } while(listenEvent_ & EPOLLET);
 }
 
