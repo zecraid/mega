@@ -184,19 +184,19 @@ void Log::write(int level, const char * file, int line, const char *format, ...)
 void Log::appendLogLevelTitle_(int level) {
     switch(level) {
         case 0:
-            buff_.append("[DEBUG]", 7);
+            buff_->append("[DEBUG]", 7);
             break;
         case 1:
-            buff_.append("[INFO] ", 7);
+            buff_->append("[INFO] ", 7);
             break;
         case 2:
-            buff_.append("[WARN] ", 7);
+            buff_->append("[WARN] ", 7);
             break;
         case 3:
-            buff_.append("[ERROR]", 7);
+            buff_->append("[ERROR]", 7);
             break;
         default:
-            buff_.append("[INFO] ", 7);
+            buff_->append("[INFO] ", 7);
             break;
     }
 }
