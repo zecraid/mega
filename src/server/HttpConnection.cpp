@@ -23,7 +23,7 @@ void HttpConnection::init(int sockFd) {
     read_buff_->retrieveAll();
     write_buff_->retrieveAll();
     isClose_ = false;
-    LOG_INFO("Client[%d](%s) in, userCount:%d", fd_, getAddress(), (int)userCount);
+    LOG_INFO("Client[%d](%s) in, userCount:%d", fd_, getAddress().c_str(), (int)userCount);
 }
 
 void HttpConnection::close() {
@@ -31,7 +31,7 @@ void HttpConnection::close() {
     if(isClose_ == false){
         isClose_ = true;
         userCount--;
-        LOG_INFO("Client[%d](%s) in, userCount:%d", fd_, getAddress(), (int)userCount);
+        LOG_INFO("Client[%d](%s) in, userCount:%d", fd_, getAddress().c_str(), (int)userCount);
         ::close(fd_);
     }
 }
