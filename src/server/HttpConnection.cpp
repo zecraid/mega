@@ -5,7 +5,6 @@ bool HttpConnection::isET;
 
 HttpConnection::HttpConnection() {
     fd_ = -1;
-    addr_ = { 0 };
     isClose_ = true;
 }
 
@@ -13,10 +12,9 @@ HttpConnection::~HttpConnection() {
     close();
 }
 
-void HttpConnection::init(int sockFd, const sockaddr_in &addr) {
+void HttpConnection::init(int sockFd) {
     assert(sockFd > 0);
     userCount++;
-    addr_ = addr;
     fd_ = sockFd;
     response_ = std::make_unique<HttpResponse>();
     request_ = std::make_unique<HttpRequest>();
@@ -25,7 +23,7 @@ void HttpConnection::init(int sockFd, const sockaddr_in &addr) {
     read_buff_->retrieveAll();
     write_buff_->retrieveAll();
     isClose_ = false;
-    LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, getIP(), getPort(), (int)userCount);
+    LOG_INFO("Client[%d](%s) in, userCount:%d", fd_, getAddress(), (int)userCount);
 }
 
 void HttpConnection::close() {
@@ -33,8 +31,8 @@ void HttpConnection::close() {
     if(isClose_ == false){
         isClose_ = true;
         userCount--;
+        LOG_INFO("Client[%d](%s) in, userCount:%d", fd_, getAddress(), (int)userCount);
         ::close(fd_);
-        LOG_INFO("Client[%d](%s:%d) quit, UserCount:%d", fd_, getIP(), getPort(), (int)userCount);
     }
 }
 
@@ -42,16 +40,17 @@ int HttpConnection::getFd() const {
     return fd_;
 }
 
-sockaddr_in HttpConnection::getAddr() const {
-    return addr_;
-}
-
-int HttpConnection::getPort() const {
-    return addr_.sin_port;
-}
-
-const char *HttpConnection::getIP() const {
-    return inet_ntoa(addr_.sin_addr);
+std::string HttpConnection::getAddress() const {
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    socklen_t len = sizeof(addr);
+    if(getpeername(fd_, (struct sockaddr *)&addr, &len) == -1){
+        return "";
+    }
+    std::string ret(inet_ntoa(addr.sin_addr));
+    ret += ":";
+    ret += std::to_string(htons(addr.sin_port));
+    return ret;
 }
 
 ssize_t HttpConnection::read(int* saveErrno) {

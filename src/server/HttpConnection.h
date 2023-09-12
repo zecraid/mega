@@ -20,14 +20,12 @@ public:
     HttpConnection();
     ~HttpConnection();
 
-    void init(int sockFd, const sockaddr_in& addr);
+    void init(int sockFd);
     ssize_t read(int* saveErrno);
     ssize_t write(int* saveErrno);
     void close();
     int getFd() const;
-    int getPort() const;
-    const char* getIP() const;
-    sockaddr_in getAddr() const;
+    std::string getAddress() const;
     bool process();
 
     // 写的总长度
@@ -45,7 +43,6 @@ public:
 
 private:
     int fd_;
-    struct  sockaddr_in addr_;
 
     bool isClose_;
 

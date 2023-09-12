@@ -25,33 +25,32 @@ void WebServer::init(int logLevel, int logQueSize, const char *sqlLocal, uint16_
 WebServer::~WebServer() {
     close(listenFd_);
     isClose_ = true;
-    free(srcDir_);
     SQLConnectionPool::instance()->closePool();
 }
 
 void WebServer::initEventMode_(int trigMode) {
     listenEvent_ = EPOLLRDHUP;
-    connEvent_ = EPOLLONESHOT | EPOLLRDHUP;
+    clientEvent_ = EPOLLONESHOT | EPOLLRDHUP;
     switch (trigMode)
     {
         case 0:
             break;
         case 1:
-            connEvent_ |= EPOLLET;
+            clientEvent_ |= EPOLLET;
             break;
         case 2:
             listenEvent_ |= EPOLLET;
             break;
         case 3:
             listenEvent_ |= EPOLLET;
-            connEvent_ |= EPOLLET;
+            clientEvent_ |= EPOLLET;
             break;
         default:
             listenEvent_ |= EPOLLET;
-            connEvent_ |= EPOLLET;
+            clientEvent_ |= EPOLLET;
             break;
     }
-    HttpConnection::isET = (connEvent_ & EPOLLET);
+    HttpConnection::isET = (clientEvent_ & EPOLLET);
 }
 
 void WebServer::start() {
@@ -109,7 +108,7 @@ void WebServer::addClient_(int fd, sockaddr_in addr) {
     if(timeoutMS_ > 0) {
         timer_->add(fd, timeoutMS_, std::bind(&WebServer::closeConn_, this, &users_[fd]));
     }
-    epoller_->addFd(fd, EPOLLIN | connEvent_);
+    epoller_->addFd(fd, EPOLLIN | clientEvent_);
     setFdNonblock(fd);
     LOG_INFO("Client[%d] in!", users_[fd].getFd());
 }
@@ -150,23 +149,19 @@ void WebServer::onRead_(HttpConnection *client) {
     assert(client);
     int ret = -1;
     int readErrno = 0;
-    ret = client->read(&readErrno);         // 读取客户端套接字的数据，读到httpconn的读缓存区
-    if(ret <= 0 && readErrno != EAGAIN) {   // 读异常就关闭客户端
+    ret = client->read(&readErrno); // 读取数据到HttpConnection的read_buff_
+    if(ret <= 0 && readErrno != EAGAIN) {   // 读异常
         closeConn_(client);
         return;
     }
-    // 业务逻辑的处理（先读后处理）
     onProcess(client);
 }
 
 void WebServer::onProcess(HttpConnection *client) {
-    // 首先调用process()进行逻辑处理
-    if(client->process()) { // 根据返回的信息重新将fd置为EPOLLOUT（写）或EPOLLIN（读）
-        //读完事件就跟内核说可以写了
-        epoller_->modFd(client->getFd(), connEvent_ | EPOLLOUT);    // 响应成功，修改监听事件为写,等待OnWrite_()发送
+    if(client->process()) { // 读完将connEvent的事件转为EPOLLOUT
+        epoller_->modFd(client->getFd(), clientEvent_ | EPOLLOUT);
     } else {
-        //写完事件就跟内核说可以读了
-        epoller_->modFd(client->getFd(), connEvent_ | EPOLLIN);
+        epoller_->modFd(client->getFd(), clientEvent_ | EPOLLIN);
     }
 }
 
@@ -176,17 +171,13 @@ void WebServer::onWrite_(HttpConnection *client) {
     int writeErrno = 0;
     ret = client->write(&writeErrno);
     if(client->writeBytesLength() == 0) {
-        /* 传输完成 */
         if(client->isKeepAlive()) {
-            // OnProcess(client);
-            epoller_->modFd(client->getFd(), connEvent_ | EPOLLIN); // 回归换成监测读事件
+            epoller_->modFd(client->getFd(), clientEvent_ | EPOLLIN); // 回归换成监测读事件
             return;
         }
-    }
-    else if(ret < 0) {
+    } else if(ret < 0) {
         if(writeErrno == EAGAIN) {  // 缓冲区满了
-            /* 继续传输 */
-            epoller_->modFd(client->getFd(), connEvent_ | EPOLLOUT);
+            epoller_->modFd(client->getFd(), clientEvent_ | EPOLLOUT);
             return;
         }
     }
