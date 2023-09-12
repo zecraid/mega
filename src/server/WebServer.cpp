@@ -23,13 +23,14 @@ void WebServer::init(int logLevel, int logQueSize, const char *sqlLocal, uint16_
 }
 
 WebServer::~WebServer() {
-    close(listen_socket_->getFd());
+    close(listenFd_);
     isClose_ = true;
+    free(srcDir_);
     SQLConnectionPool::instance()->closePool();
 }
 
 void WebServer::initEventMode_(int trigMode) {
-    listenEvent_ = EPOLLRDHUP;
+    listenFd_ = EPOLLRDHUP;
     connEvent_ = EPOLLONESHOT | EPOLLRDHUP;
     switch (trigMode)
     {
@@ -65,7 +66,7 @@ void WebServer::start() {
             /* 处理事件 */
             int fd = epoller_->getEventFd(i);
             uint32_t events = epoller_->getEvents(i);
-            if(fd == listen_socket_->getFd()) {
+            if(fd == listenFd_) {
                 dealListen_();
             }
             else if(events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
@@ -102,9 +103,9 @@ void WebServer::closeConn_(HttpConnection *client) {
     client->close();
 }
 
-void WebServer::addClient_(int fd) {
+void WebServer::addClient_(int fd, sockaddr_in addr) {
     assert(fd > 0);
-    users_[fd].init(fd);
+    users_[fd].init(fd, addr);
     if(timeoutMS_ > 0) {
         timer_->add(fd, timeoutMS_, std::bind(&WebServer::closeConn_, this, &users_[fd]));
     }
@@ -114,15 +115,17 @@ void WebServer::addClient_(int fd) {
 }
 
 void WebServer::dealListen_() {
+    struct sockaddr_in addr;
+    socklen_t len = sizeof(addr);
     do {
-        int client_fd = ::accept(listen_socket_->getFd(), nullptr, nullptr);
-        if(client_fd <= 0) { return;}
+        int fd = accept(listenFd_, (struct sockaddr *)&addr, &len);
+        if(fd <= 0) { return;}
         else if(HttpConnection::userCount >= MAX_FD) {
-            sendError_(client_fd, "Server busy!");
+            sendError_(fd, "Server busy!");
             LOG_WARN("Clients is full!");
             return;
         }
-        addClient_(client_fd);
+        addClient_(fd, addr);
     } while(listenEvent_ & EPOLLET);
 }
 
@@ -198,45 +201,45 @@ bool WebServer::initSocket_() {
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     addr.sin_port = htons(port_);
 
-    int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-    listen_socket_ = std::make_unique<Socket>(listen_fd);
-    if(listen_fd < 0) {
+    listenFd_ = socket(AF_INET, SOCK_STREAM, 0);
+    if(listenFd_ < 0) {
         LOG_ERROR("Create socket error!", port_);
         return false;
     }
 
     int optval = 1;
-
-    ret = setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
+    /* 端口复用 */
+    /* 只有最后一个套接字会正常接收数据。 */
+    ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void*)&optval, sizeof(int));
     if(ret == -1) {
         LOG_ERROR("set socket setsockopt error !");
-        close(listen_fd);
+        close(listenFd_);
         return false;
     }
 
     // 绑定
-    ret = bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr));
+    ret = bind(listenFd_, (struct sockaddr *)&addr, sizeof(addr));
     if(ret < 0) {
         LOG_ERROR("Bind Port:%d error!", port_);
-        close(listen_fd);
+        close(listenFd_);
         return false;
     }
 
     // 监听
-    ret = listen(listen_fd, 8);
+    ret = listen(listenFd_, 8);
     if(ret < 0) {
         LOG_ERROR("Listen port:%d error!", port_);
-        close(listen_fd);
+        close(listenFd_);
         return false;
     }
 
-    ret = epoller_->addFd(listen_fd,  listenEvent_ | EPOLLIN);  // 将监听套接字加入epoller
+    ret = epoller_->addFd(listenFd_,  listenEvent_ | EPOLLIN);  // 将监听套接字加入epoller
     if(ret == 0) {
         LOG_ERROR("Add listen error!");
-        close(listen_fd);
+        close(listenFd_);
         return false;
     }
-    setFdNonblock(listen_fd);
+    setFdNonblock(listenFd_);
     LOG_INFO("Server port:%d", port_);
     return true;
 }
@@ -245,5 +248,3 @@ int WebServer::setFdNonblock(int fd) {
     assert(fd > 0);
     return fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0) | O_NONBLOCK);
 }
-
-
