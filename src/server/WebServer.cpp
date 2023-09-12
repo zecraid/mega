@@ -1,8 +1,7 @@
 #include "WebServer.h"
 
-WebServer::WebServer(const char *ip, uint16_t port) {
+WebServer::WebServer() {
     Util::welcome();
-    port_ = port;
     timeoutMS_ = 60000;
     isClose_ = false;
     timer_ = std::make_unique<HeapTimer>();
@@ -10,8 +9,9 @@ WebServer::WebServer(const char *ip, uint16_t port) {
     epoller_ = std::make_unique<Epoller>();
 }
 
-void WebServer::init(int logLevel, int logQueSize, const char *sqlLocal, uint16_t sqlPort, const char *sqlUser,
+void WebServer::init(uint16_t port,int logLevel, int logQueSize, const char *sqlLocal, uint16_t sqlPort, const char *sqlUser,
                      const char *sqlPwd, const char *dbName, int connPoolNum, const char *srcDir) {
+    port_ = port;
     HttpConnection::srcDir = srcDir;
     HttpConnection::userCount = 0;
     SQLConnectionPool::instance()->init(sqlLocal, sqlPort, sqlUser, sqlPwd, dbName, connPoolNum);
@@ -54,15 +54,14 @@ void WebServer::initEventMode_(int trigMode) {
 }
 
 void WebServer::start() {
-    int timeMS = -1;  /* epoll wait timeout == -1 无事件将阻塞 */
-    if(!isClose_) { LOG_INFO("Server Start SUCCESS"); }
+    int timeMS = -1;  // timeout == -1 无事件将阻塞
+    if(!isClose_) { LOG_INFO("Server Start ...SUCCESS"); }
     while (!isClose_){
         if(timeoutMS_ > 0) {
             timeMS = timer_->getNextTick();
         }
         int eventCnt = epoller_->wait(timeMS);
         for(int i = 0; i < eventCnt; i++) {
-            /* 处理事件 */
             int fd = epoller_->getEventFd(i);
             uint32_t events = epoller_->getEvents(i);
             if(fd == listenFd_) {
@@ -221,7 +220,8 @@ bool WebServer::initSocket_() {
         return false;
     }
 
-    ret = epoller_->addFd(listenFd_,  listenEvent_ | EPOLLIN);  // 将监听套接字加入epoller
+    // 加入红黑树
+    ret = epoller_->addFd(listenFd_,  listenEvent_ | EPOLLIN);
     if(ret == 0) {
         LOG_ERROR("Add listen error!");
         close(listenFd_);

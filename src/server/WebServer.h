@@ -21,10 +21,10 @@
 
 class WebServer {
 public:
-    WebServer(const char* ip, uint16_t port);
+    WebServer();
     ~WebServer();
 
-    void init(int logLevel, int logQueSize,
+    void init(uint16_t port, int logLevel, int logQueSize,
               const char* sqlLocal, uint16_t sqlPort, const char* sqlUser, const  char* sqlPwd,
               const char* dbName, int connPoolNum, const char *srcDir);
     void start();
