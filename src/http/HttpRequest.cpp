@@ -55,23 +55,22 @@ bool HttpRequest::parse(Buffer* buff){
         }
         buff->moveReadPosToEnd(lineend + 2);        // 跳过回车换行
     }
-    LOG_DEBUG("%s %s\n", method_.c_str(), path_.c_str());
+    LOG_DEBUG("%s %s", method_.c_str(), path_.c_str());
     return true;
 }
 
 bool HttpRequest::parseRequestLine_(const std::string& line)
 {
     std::regex patten("^([^ ]*) ([^ ]*) HTTP/([^ ]*)$");
-    std::smatch subMatch;  // 用来匹配patten得到结果
-    // 在匹配规则中，以括号()的方式来划分组别 一共三个括号 [0]表示整体
-    if(std::regex_match(line, subMatch, patten)){ // 匹配指定字符串整体是否符合
+    std::smatch subMatch;
+    if(std::regex_match(line, subMatch, patten)){
         method_ = subMatch[1];
         path_ = subMatch[2];
         version_ = subMatch[3];
         state_ = HEADERS;
         return true;
     }
-    LOG_ERROR("RequestLine Error\n");
+    LOG_ERROR("RequestLine Error");
     return false;
 }
 
@@ -103,7 +102,7 @@ void HttpRequest::parseBody_(const std::string& line){
     body_ = line;
     parsePost_();
     state_ = FINISH; // 状态转换为下一个状态
-    LOG_DEBUG("Body:%s, len:%d\n", line.c_str(), line.size());
+    LOG_DEBUG("Body:%s, len:%d", line.c_str(), line.size());
 }
 
 // 16进制转化为10进制
@@ -170,7 +169,7 @@ void HttpRequest::parseFromUrlencoded_(){
                 value = body_.substr(j, i - j);
                 j = i + 1;
                 post_[key] = value;
-                LOG_DEBUG("%s = %s\n", key.c_str(), value.c_str());
+                LOG_DEBUG("%s = %s", key.c_str(), value.c_str());
                 break;
             default:
                 break;
@@ -206,12 +205,12 @@ bool HttpRequest::userLogin(const std::string &name, const std::string &pwd) {
     res = mysql_store_result(sql);
 
     while(MYSQL_ROW row = mysql_fetch_row(res)) {
-        LOG_DEBUG("MYSQL ROW: %s %s\n", row[0], row[1]);
+        LOG_DEBUG("MYSQL ROW: %s %s", row[0], row[1]);
         std::string password(row[1]);
         if(pwd == password) { flag = true; }
         else {
             flag = false;
-            LOG_INFO("password error\n");
+            LOG_INFO("password error");
         }
     }
     mysql_free_result(res);
@@ -239,7 +238,7 @@ bool HttpRequest::userRegister(const std::string &name, const std::string &pwd) 
     while(MYSQL_ROW row = mysql_fetch_row(res)) {
         std::string username(row[0]);
         if(name == username) {
-            LOG_INFO("user used\n");
+            LOG_INFO("user used");
             mysql_free_result(res);
             return false;
         }
@@ -250,11 +249,11 @@ bool HttpRequest::userRegister(const std::string &name, const std::string &pwd) 
     snprintf(order, 256,"INSERT INTO user(username, password) VALUES('%s','%s')", name.c_str(), pwd.c_str());
     LOG_DEBUG( "%s", order);
     if(mysql_query(sql, order)) {
-        LOG_DEBUG( "Insert error\n");
+        LOG_DEBUG( "Insert error");
         flag = false;
     }
     flag = true;
-    LOG_INFO( "userRegister success\n");
+    LOG_INFO( "userRegister success");
     return flag;
 }
 

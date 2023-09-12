@@ -25,17 +25,17 @@ public:
     HttpRequest() { init(); }
     ~HttpRequest() = default;
 
-    void init();
-    bool parse(Buffer* buff);
+    void init(); // 初始化Request
+    bool parse(Buffer* buff); // 有限状态机解析HTPP请求
 
-    std::string path() const;
+    std::string path() const; // 请求路径
     std::string& path();
-    std::string method() const;
-    std::string version() const;
-    std::string getPost(const std::string& key) const;
+    std::string method() const; // HTTP请求方式
+    std::string version() const; // HTTP版本号
+    std::string getPost(const std::string& key) const; // 传入key，获取Post请求的数据value
     std::string getPost(const char* key) const;
 
-    bool isKeepAlive() const;
+    bool isKeepAlive() const; // Request 是否为keep-alive
 
 private:
     bool parseRequestLine_(const std::string& line);  // 处理请求行
@@ -49,6 +49,7 @@ private:
     static bool userLogin(const std::string& name, const std::string& pwd); // 用户登录
     static bool userRegister(const std::string& name, const std::string& pwd); // 用户注册
 
+private:
     PARSE_STATE state_;
     std::string method_, path_, version_, body_;
     std::unordered_map<std::string, std::string> header_;

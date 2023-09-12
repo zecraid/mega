@@ -4,8 +4,6 @@ std::atomic<int> HttpConnection::userCount;
 bool HttpConnection::isET;
 
 HttpConnection::HttpConnection() {
-    fd_ = -1;
-    addr_ = { 0 };
     isClose_ = true;
 }
 
@@ -13,11 +11,10 @@ HttpConnection::~HttpConnection() {
     close();
 }
 
-void HttpConnection::init(int sockFd, const sockaddr_in &addr) {
+void HttpConnection::init(int sockFd) {
     assert(sockFd > 0);
     userCount++;
-    addr_ = addr;
-    fd_ = sockFd;
+    socket_ = std::make_unique<Socket>(sockFd);
     response_ = std::make_unique<HttpResponse>();
     request_ = std::make_unique<HttpRequest>();
     read_buff_ = std::make_unique<Buffer>();
@@ -25,7 +22,7 @@ void HttpConnection::init(int sockFd, const sockaddr_in &addr) {
     read_buff_->retrieveAll();
     write_buff_->retrieveAll();
     isClose_ = false;
-    LOG_INFO("Client[%d](%s:%d) in, userCount:%d", fd_, getIP(), getPort(), (int)userCount);
+    LOG_INFO("client[%s] in, userCount:%d", getIP().c_str(), (int)userCount);
 }
 
 void HttpConnection::close() {
@@ -33,31 +30,23 @@ void HttpConnection::close() {
     if(isClose_ == false){
         isClose_ = true;
         userCount--;
-        ::close(fd_);
-        LOG_INFO("Client[%d](%s:%d) quit, UserCount:%d", fd_, getIP(), getPort(), (int)userCount);
+        ::close(getFd());
+        LOG_INFO("client[%s] in, userCount:%d", getIP().c_str(), (int)userCount);
     }
 }
 
 int HttpConnection::getFd() const {
-    return fd_;
+    return socket_->getFd();
 }
 
-sockaddr_in HttpConnection::getAddr() const {
-    return addr_;
-}
-
-int HttpConnection::getPort() const {
-    return addr_.sin_port;
-}
-
-const char *HttpConnection::getIP() const {
-    return inet_ntoa(addr_.sin_addr);
+std::string HttpConnection::getIP() const {
+    return socket_->getAddr();
 }
 
 ssize_t HttpConnection::read(int* saveErrno) {
     ssize_t len = -1;
     do {
-        len = read_buff_->readFd(fd_, saveErrno);
+        len = read_buff_->readFd(getFd(), saveErrno);
         if (len <= 0) {
             break;
         }
@@ -69,7 +58,7 @@ ssize_t HttpConnection::read(int* saveErrno) {
 ssize_t HttpConnection::write(int* saveErrno) {
     ssize_t len = -1;
     do {
-        len = writev(fd_, iov_, iovCnt_);   // 将iov的内容写到fd中
+        len = writev(getFd(), iov_, iovCnt_);   // 将iov的内容写到fd中
         if(len <= 0) {
             *saveErrno = errno;
             break;
@@ -120,3 +109,11 @@ bool HttpConnection::process() {
     return true;
 }
 
+// 写的总长度
+int HttpConnection::writeBytesLength() {
+    return iov_[0].iov_len + iov_[1].iov_len;
+}
+
+bool HttpConnection::isKeepAlive() const {
+    return request_->isKeepAlive();
+}

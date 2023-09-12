@@ -76,7 +76,7 @@ ST Socket::listen() const {
     return ST_SUCCESS;
 }
 
-ST Socket::accept(int &client_fd) const {
+ST Socket::accept(int &client_fd) {
     assert(fd_ != -1);
     client_fd = ::accept(fd_, nullptr, nullptr);
     if (client_fd == -1) {

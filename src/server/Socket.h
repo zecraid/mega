@@ -17,7 +17,7 @@ public:
     ST create(); // 创建ListenFd
     ST bind(const char* ip, uint16_t port) const; // 绑定服务器地址结构
     ST listen() const; // 绑定最大事件数目
-    ST accept(int &client_fd) const; // 监听并创建client_fd,client_fd最后服务于Connection
+    ST accept(int &client_fd); // 监听并创建client_fd,client_fd最后服务于Connection
     ST connect(const char *ip, uint16_t port) const; // 连接服务器
     ST setNonBlocking(); // fd设置非阻塞
     bool isNonBlocking() const; // 判断fd是否为非阻塞

@@ -1,5 +1,5 @@
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
+#ifndef __THREADPOOL_H__
+#define __THREADPOOL_H__
 
 #include <queue>
 #include <mutex>
@@ -7,7 +7,6 @@
 #include <functional>
 #include <thread>
 #include <assert.h>
-
 
 class ThreadPool {
 public:
@@ -58,4 +57,4 @@ private:
     std::queue<std::function<void()>> tasks; // 任务队列，函数类型为void()
 };
 
-#endif
+#endif //!__THREADPOOL_H__

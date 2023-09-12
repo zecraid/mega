@@ -9,15 +9,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <memory>
 
 #include "Epoller.h"
 #include "HttpConnection.h"
 #include "Util.h"
+#include "Socket.h"
 #include "../timer/HeapTimer.h"
 #include "../log/Log.h"
 #include "../pool/SqlConnectionPool.h"
 #include "../pool/ThreadPool.h"
-
 
 class WebServer {
 public:
@@ -32,7 +33,7 @@ public:
 private:
     bool initSocket_();
     void initEventMode_(int trigMode);
-    void addClient_(int fd, sockaddr_in addr);
+    void addClient_(int fd);
 
     void dealListen_();
     void dealWrite_(HttpConnection* client);
@@ -54,8 +55,10 @@ private:
     int port_;
     int timeoutMS_;  /* 毫秒MS */
     bool isClose_;
-    int listenFd_;
-    char* srcDir_;
+
+    std::unique_ptr<Socket> listen_socket_;
+
+//    int listenFd_;
 
     uint32_t listenEvent_;  // 监听事件
     uint32_t connEvent_;    // 连接事件

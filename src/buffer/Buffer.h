@@ -1,10 +1,10 @@
 #ifndef __BUFFER_H_
 #define __BUFFER_H_
-#include <cstring>   //perror
+#include <cstring>
 #include <iostream>
-#include <unistd.h>  // write
-#include <sys/uio.h> //readv
-#include <vector> //readv
+#include <unistd.h>
+#include <sys/uio.h>
+#include <vector>
 #include <atomic>
 #include <assert.h>
 
