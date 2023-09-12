@@ -115,8 +115,7 @@ void WebServer::addClient_(int fd) {
 
 void WebServer::dealListen_() {
     do {
-        int client_fd = -1;
-        listen_socket_->accept(client_fd);
+        int client_fd = ::accept(listen_socket_->getFd(), nullptr, nullptr);
         if(client_fd <= 0) { return;}
         else if(HttpConnection::userCount >= MAX_FD) {
             sendError_(client_fd, "Server busy!");
