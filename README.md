@@ -19,25 +19,25 @@ mega/
 |-- Makefile
 |-- README.md
 |-- resources                 静态资源文件
-|-- src												源代码
-|   |-- buffer								缓冲区模块
+|-- src                       源代码
+|   |-- buffer                缓冲区模块
 |   |   |-- Buffer.cpp
 |   |   `-- Buffer.h
-|   |-- http									Http Request模块 和 Http Response模块
+|   |-- http                  Http Request模块 和 Http Response模块
 |   |   |-- HttpRequest.cpp
 |   |   |-- HttpRequest.h
 |   |   |-- HttpResponse.cpp
 |   |   `-- HttpResponse.h
-|   |-- log										日志模块
+|   |-- log                   日志模块
 |   |   |-- BlockQueue.h
 |   |   |-- Log.cpp
 |   |   `-- Log.h
-|   |-- pool									数据库连接池模块 和 线程池模块
+|   |-- pool                  数据库连接池模块 和 线程池模块
 |   |   |-- SqlConnectionPool.cpp
 |   |   |-- SqlConnectionPool.h
 |   |   |-- SqlConnectionRAII.h
 |   |   `-- ThreadPool.h
-|   |-- server								服务模块
+|   |-- server                服务模块
 |   |   |-- Epoller.cpp
 |   |   |-- Epoller.h
 |   |   |-- HttpConnection.cpp
@@ -46,12 +46,12 @@ mega/
 |   |   |-- Util.h
 |   |   |-- WebServer.cpp
 |   |   `-- WebServer.h
-|   `-- timer									定时器模块
+|   `-- timer                  定时器模块
 |       |-- HeapTimer.cpp
 |       `-- HeapTimer.h
-`-- start.sh									后台启动脚本
-|-- server										编译后前台脚本
-|-- shutdown.sh								关闭后台执行脚本
+`-- start.sh                   后台启动脚本
+|-- server                     编译后前台脚本
+|-- shutdown.sh                关闭后台执行脚本
 ```
 
 ## 环境
