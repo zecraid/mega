@@ -174,8 +174,8 @@ void Log::write(int level, const char * file, int line, const char *format, ...)
         if(isAsync_ && deque_ && !deque_->full()){ // 异步方式（加入阻塞队列中，等待写线程读取日志信息）
             deque_->push_back(buff_->retrieveAllToStr());
         } else { // 同步方式
-//            std::string log_line(buff_->peek(), buff_->readableBytes());
-//            printf("%s",log_line.c_str());
+            std::string log_line(buff_->peek(), buff_->readableBytes());
+            printf("%s",log_line.c_str());
             fputs(buff_->peek(), fp_); // 同步就直接写入文件
         }
         buff_->retrieveAll();
