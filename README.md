@@ -86,5 +86,7 @@ INSERT INTO user(username, password) VALUES('YOUR_NAME', 'YOUR_PASSWORD');
 
 测试环境：腾讯云轻量应用服务器 CentOS 7.6 4核 4GB
 
-<div align=center><img src="./assets/webbench.png" style="zoom:50%;" /></div>
+![](./assets/webbench.png)
+
+
 
