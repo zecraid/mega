@@ -15,10 +15,10 @@ Linux下C++轻量级Web服务器
 
 ```
 mega/
-|-- main.cpp 									程序主入口
+|-- main.cpp                  程序主入口
 |-- Makefile
 |-- README.md
-|-- resources									静态资源文件
+|-- resources                 静态资源文件
 |-- src												源代码
 |   |-- buffer								缓冲区模块
 |   |   |-- Buffer.cpp
