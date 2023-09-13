@@ -1,7 +1,7 @@
 #include "Epoller.h"
 
-Epoller::Epoller(int maxEvent) :epfd_(epoll_create(512)), events_(maxEvent){
-    assert(epfd_ >= 0 && events_.size() > 0);
+Epoller::Epoller(int maxEvent) :epfd_(epoll_create(512)), ready_events_(maxEvent){
+    assert(epfd_ >= 0 && ready_events_.size() > 0);
 }
 
 Epoller::~Epoller() {
@@ -31,17 +31,17 @@ bool Epoller::delFd(int fd) {
 
 // 返回就绪事件数量
 int Epoller::wait(int timeoutMs) {
-    return epoll_wait(epfd_, &events_[0], static_cast<int>(events_.size()), timeoutMs);
+    return epoll_wait(epfd_, &ready_events_[0], static_cast<int>(ready_events_.size()), timeoutMs);
 }
 
 // 获取事件文件描述符
 int Epoller::getEventFd(size_t i) const {
-    assert(i < events_.size() && i >= 0);
-    return events_[i].data.fd;
+    assert(i < ready_events_.size() && i >= 0);
+    return ready_events_[i].data.fd;
 }
 
 // 获取事件属性
 uint32_t Epoller::getEvents(size_t i) const {
-    assert(i < events_.size() && i >= 0);
-    return events_[i].events;
+    assert(i < ready_events_.size() && i >= 0);
+    return ready_events_[i].events;
 }

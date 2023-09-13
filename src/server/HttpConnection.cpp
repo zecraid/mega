@@ -116,3 +116,11 @@ bool HttpConnection::process() {
     return true;
 }
 
+int HttpConnection::writeBytesLength() {
+    return iov_[0].iov_len + iov_[1].iov_len;
+}
+
+bool HttpConnection::isKeepAlive() const {
+    return request_->isKeepAlive();
+}
+
